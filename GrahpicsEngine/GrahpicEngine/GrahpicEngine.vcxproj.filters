@@ -22,6 +22,12 @@
     <Filter Include="Object">
       <UniqueIdentifier>{5fd8bdf7-e512-4a96-9e7e-c29f531f61aa}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Object\Transform">
+      <UniqueIdentifier>{44157fd8-7937-4808-b5e5-ba5e8976a0c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphic\Camera">
+      <UniqueIdentifier>{62dc51f7-9581-4b50-86c9-43edae324954}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModelLoader.cpp">
@@ -52,7 +58,13 @@
       <Filter>Object</Filter>
     </ClCompile>
     <ClCompile Include="Transform.cpp">
-      <Filter>Object</Filter>
+      <Filter>Object\Transform</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Graphic\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphic.cpp">
+      <Filter>Graphic</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -84,7 +96,13 @@
       <Filter>Object</Filter>
     </ClInclude>
     <ClInclude Include="Transform.h">
-      <Filter>Object</Filter>
+      <Filter>Object\Transform</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Graphic\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphic.h">
+      <Filter>Graphic</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

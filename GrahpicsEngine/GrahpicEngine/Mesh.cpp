@@ -1,7 +1,9 @@
-﻿#include <iostream>
-#include <glad/glad.h>
+﻿#include <glad/glad.h>
+#include <glm/gtc/type_ptr.hpp>
 
 #include "Mesh.h"
+#include "ShaderManager.h"
+#include "Transform.h"
 
 Mesh::Mesh(std::vector<glm::vec3> vertex_, std::vector<glm::vec3> normal_,
 	std::vector<glm::vec2> uv_, std::vector<unsigned> indices_)
@@ -10,10 +12,58 @@ Mesh::Mesh(std::vector<glm::vec3> vertex_, std::vector<glm::vec3> normal_,
 	vertexNormal = normal_;
 	textureCoordinate = uv_;
 	indices = indices_;
+	shader = SHADERS->Get("Default");
 
 	if (textureCoordinate.size() <= 0)
 		CreateSphericalUV();
 
+	CreateBuffers();
+}
+
+Mesh::Mesh(Mesh& copy)
+{
+	vertex = copy.vertex;
+	vertexNormal = copy.vertexNormal;
+	textureCoordinate = copy.textureCoordinate;
+	indices = copy.indices;
+	shader = SHADERS->Get("Default");
+
+	CreateBuffers();
+}
+
+Mesh::~Mesh()
+{
+	glDeleteVertexArrays(1, &VAO);
+	glDeleteBuffers(3, &VBO[0]);
+	glDeleteBuffers(1, &EBO);
+}
+
+void Mesh::Draw(Transform* transform)
+{
+	shader->Use();
+	shader->Set("model", transform->GetTransform());
+
+	glBindVertexArray(VAO);
+	glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_INT, nullptr);
+	glBindVertexArray(0);
+}
+
+void Mesh::Initialize()
+{
+}
+
+void Mesh::Update()
+{
+	//DO not call Draw Function, I want to explicitly call Draw function at Graphics.cpp - Update()
+}
+
+void Mesh::Delete()
+{
+
+}
+
+void Mesh::CreateBuffers()
+{
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(3, &VBO[0]);
 	glGenBuffers(1, &EBO);
@@ -23,22 +73,9 @@ Mesh::Mesh(std::vector<glm::vec3> vertex_, std::vector<glm::vec3> normal_,
 	for (int i = 0; i < 3; ++i)
 		BindBuffer(i);
 
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
 	glBindVertexArray(0);
-}
-
-void Mesh::Initialize()
-{
-	std::cout << "Mesh Init" << std::endl;
-}
-
-void Mesh::Update()
-{
-
-}
-
-void Mesh::Delete()
-{
-
 }
 
 void Mesh::BindBuffer(int index)
@@ -48,7 +85,7 @@ void Mesh::BindBuffer(int index)
 	// 1: vertex, 2: normal, 3: textureCoordinate
 	switch (index)
 	{
-	case 1:
+	case 0:
 	{
 		glBufferData(GL_ARRAY_BUFFER, (sizeof(glm::vec3) * vertex.size()), vertex.data(), GL_STATIC_DRAW);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
@@ -56,7 +93,7 @@ void Mesh::BindBuffer(int index)
 	}
 	break;
 
-	case 2:
+	case 1:
 	{
 		glBufferData(GL_ARRAY_BUFFER, (sizeof(glm::vec3) * faceNormal.size()), faceNormal.data(), GL_STATIC_DRAW);
 		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
@@ -64,7 +101,7 @@ void Mesh::BindBuffer(int index)
 	}
 	break;
 
-	case 3:
+	case 2:
 	{
 		glBufferData(GL_ARRAY_BUFFER, (sizeof(glm::vec2) * textureCoordinate.size()), textureCoordinate.data(), GL_STATIC_DRAW);
 		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, nullptr);

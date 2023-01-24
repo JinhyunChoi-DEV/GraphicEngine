@@ -21,6 +21,14 @@ Shader::Shader(std::string name, std::string vertex, std::string fragment)
 	Compile();
 }
 
+Shader::~Shader()
+{
+	if (ProgramID != 0)
+	{
+		glDeleteProgram(ProgramID);
+	}
+}
+
 void Shader::Recompile()
 {
 	if (ProgramID != 0)
@@ -133,8 +141,10 @@ void Shader::Set(const std::string& name, glm::mat4 value) const
 
 void Shader::Compile()
 {
-	unsigned vertexShader = CompileShader(Name, versionText, vertex, GL_VERTEX_SHADER);
-	unsigned fragmentShader = CompileShader(Name, versionText, vertex, GL_FRAGMENT_SHADER);
+	auto vertexCodePath = filePath + vertex;
+	auto fragCodePath = filePath + fragment;
+	unsigned vertexShader = CompileShader(Name, versionText, vertexCodePath, GL_VERTEX_SHADER);
+	unsigned fragmentShader = CompileShader(Name, versionText, fragCodePath, GL_FRAGMENT_SHADER);
 
 	ProgramID = LinkShader(vertexShader, fragmentShader);
 
@@ -165,6 +175,7 @@ namespace
 
 		std::string tempCode = versionCode + GetShaderCode(filePath);
 		const char* code = tempCode.c_str();
+		std::cout << code << std::endl;
 		glShaderSource(shader, 1, &code, nullptr);
 		glCompileShader(shader);
 

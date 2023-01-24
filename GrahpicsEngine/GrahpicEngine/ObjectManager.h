@@ -8,6 +8,7 @@ class ObjectManage
 {
 public:
 	ObjectManage();
+	~ObjectManage();
 
 	void Initialize();
 	void Update();
@@ -17,7 +18,7 @@ public:
 	void Delete(std::string name);
 
 	Object* Get(std::string name);
-	std::vector<const Object*> GetAll();
+	std::vector<Object*> GetAll() const;
 
 private:
 	bool IsExist(std::string name);

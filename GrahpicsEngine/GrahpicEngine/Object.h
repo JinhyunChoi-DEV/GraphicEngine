@@ -12,6 +12,7 @@ class Object
 public:
 	Object();
 	Object(std::string name);
+	~Object();
 
 	void Update();
 	void AddComponent(IComponent* component);

@@ -2,6 +2,8 @@
 #include <glad/glad.h>
 
 #include "Application.h"
+
+#include "Graphic.h"
 #include "Input.h"
 
 void error_callback(int error_code, const char* description);
@@ -31,7 +33,7 @@ Application::Application()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	mainWindow = glfwCreateWindow(1600, 900, "JinhyunChoi-GraphicEngine", NULL, NULL);
+	mainWindow = glfwCreateWindow(1200, 800, "JinhyunChoi-GraphicEngine", NULL, NULL);
 	if (mainWindow == nullptr)
 	{
 		glfwTerminate();
@@ -54,6 +56,7 @@ Application::Application()
 
 void Application::Initialize()
 {
+	GRAPHIC->ScreenSize = glm::vec2(1200, 800);
 }
 
 void Application::Update()
@@ -85,8 +88,7 @@ void mouse_callback(GLFWwindow* window, double x, double y)
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
-	//TODO: 
-	//GRAPHIC->SetViewSize(APPLICATION->GetWindowSize());
+	GRAPHIC->ScreenSize = glm::vec2(width, height);
 }
 
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mode)

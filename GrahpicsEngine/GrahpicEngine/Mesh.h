@@ -3,13 +3,20 @@
 #include <string>
 #include <glm/glm.hpp>
 
+#include "Shader.h"
 #include "IComponent.h"
+
+class Transform;
 
 class Mesh : public IComponent
 {
 public:
 	Mesh(std::vector<glm::vec3> vertex_, std::vector<glm::vec3> normal_,
 		std::vector<glm::vec2> uv_, std::vector<unsigned int> indices_);
+	Mesh(Mesh& copy);
+	~Mesh();
+
+	void Draw(Transform* transform);
 
 	void Initialize() override;
 	void Update() override;
@@ -28,9 +35,11 @@ public:
 	unsigned int VAO;
 	unsigned int VBO[3];
 	unsigned int EBO;
+	Shader* shader;
 	// Shader?
 
 private:
+	void CreateBuffers();
 	void BindBuffer(int index);
 	void CreateFaceNormal();
 	void CreateSphericalUV();

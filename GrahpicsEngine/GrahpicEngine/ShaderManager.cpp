@@ -12,6 +12,11 @@ ShaderManager::ShaderManager()
 		SHADERS = this;
 }
 
+ShaderManager::~ShaderManager()
+{
+	shaders.clear();
+}
+
 void ShaderManager::Compile(std::string name, std::string vertex, std::string fragment)
 {
 	if (IsExist(name))
@@ -57,7 +62,7 @@ Shader* ShaderManager::Get(std::string name)
 	if (!IsExist(name))
 		return nullptr;
 
-	return shaders[name];
+	return shaders[name].get();
 }
 
 bool ShaderManager::IsExist(std::string name)

@@ -12,6 +12,7 @@ class ModelLoader
 {
 public:
 	ModelLoader();
+	~ModelLoader();
 
 	void Load(std::string name, std::string fileName);
 	Mesh* Get(std::string name);

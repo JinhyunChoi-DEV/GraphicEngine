@@ -3,7 +3,7 @@
 #include <string>
 #include <glm/glm.hpp>
 
-//TODO: 추후에 구현
+//TODO: Adding later
 /*
 enum class ShaderType
 {
@@ -15,6 +15,7 @@ class Shader
 {
 public:
 	Shader(std::string name, std::string vertex, std::string fragment);
+	~Shader();
 
 	void Recompile();
 	void Use();

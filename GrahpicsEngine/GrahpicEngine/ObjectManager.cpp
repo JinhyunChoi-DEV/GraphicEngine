@@ -8,9 +8,14 @@ ObjectManage::ObjectManage()
 		OBJMANAGER = this;
 }
 
+ObjectManage::~ObjectManage()
+{
+	if (static_cast<int>(objects.size()) > 0)
+		objects.clear();
+}
+
 void ObjectManage::Initialize()
 {
-	objects.clear();
 }
 
 void ObjectManage::Update()
@@ -49,9 +54,9 @@ Object* ObjectManage::Get(std::string name)
 	return objects[name].get();
 }
 
-std::vector<const Object*> ObjectManage::GetAll()
+std::vector<Object*> ObjectManage::GetAll() const
 {
-	std::vector<const Object*> result;
+	std::vector<Object*> result;
 
 	for (auto const& object : objects)
 	{

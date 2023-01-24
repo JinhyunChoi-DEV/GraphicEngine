@@ -12,6 +12,11 @@ ModelLoader::ModelLoader()
 		MODELLOAD = this;
 }
 
+ModelLoader::~ModelLoader()
+{
+	models.clear();
+}
+
 void ModelLoader::Load(std::string name, std::string fileName)
 {
 	vertex.clear();
@@ -72,7 +77,9 @@ void ModelLoader::CreateMesh(aiMesh* mesh, const aiScene* scene)
 		vector.x = mesh->mVertices[i].x;
 		vector.y = mesh->mVertices[i].y;
 		vector.z = mesh->mVertices[i].z;
-		std::cout << vector.x << ", " << vector.y << ", " << vector.z << std::endl;
+
+		//std::cout << vector.x << ", " << vector.y << ", " << vector.z << std::endl;
+
 		vertex.push_back(vector);
 
 		if (mesh->HasNormals())

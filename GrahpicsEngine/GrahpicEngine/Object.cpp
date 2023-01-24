@@ -11,6 +11,14 @@ Object::Object(std::string name)
 	SettingDefault(name);
 }
 
+Object::~Object()
+{
+	for (auto comp : components)
+		delete comp;
+
+	components.clear();
+}
+
 void Object::Update()
 {
 	if (!IsActive)
