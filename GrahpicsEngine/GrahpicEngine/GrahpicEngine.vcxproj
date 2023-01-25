@@ -193,6 +193,7 @@
     <ClInclude Include="IComponent.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="ModelTransformFixer.h" />
     <ClInclude Include="ModelLoader.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="ObjectManager.h" />

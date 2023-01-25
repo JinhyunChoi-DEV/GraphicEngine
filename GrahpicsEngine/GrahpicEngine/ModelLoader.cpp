@@ -1,4 +1,5 @@
-﻿#include <iostream>
+﻿#include <assimp/postprocess.h>
+#include <iostream>
 #include <glm/glm.hpp>
 
 #include "ModelLoader.h"
@@ -19,20 +20,27 @@ ModelLoader::~ModelLoader()
 
 void ModelLoader::Load(std::string name, std::string fileName)
 {
+	float minValue = std::numeric_limits<float>::max();
+	float maxValue = std::numeric_limits<float>::min();
+	data.min = glm::vec3(minValue, minValue, minValue);
+	data.max = glm::vec3(maxValue, maxValue, maxValue);
+	data.sumAllVertex = glm::vec3(0, 0, 0);
+
 	vertex.clear();
-	normal.clear();
+	vertexNormal.clear();
+	faceNormal.clear();
 	textureCoordinate.clear();
 	indices.clear();
 
 	std::string path = rootPath + fileName;
-	const aiScene* scene = import.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
-
+	const aiScene* scene = import.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenSmoothNormals);
 	if (!Completed(scene))
 		return;
 
 	CreateNode(scene->mRootNode, scene);
 
-	Mesh* mesh = new Mesh(vertex, normal, textureCoordinate, indices);
+	vertex = SetToUnitVertex(data, vertex);
+	Mesh* mesh = new Mesh(vertex, vertexNormal, textureCoordinate, indices);
 	models.insert(std::make_pair(name, mesh));
 }
 
@@ -78,7 +86,9 @@ void ModelLoader::CreateMesh(aiMesh* mesh, const aiScene* scene)
 		vector.y = mesh->mVertices[i].y;
 		vector.z = mesh->mVertices[i].z;
 
-		//std::cout << vector.x << ", " << vector.y << ", " << vector.z << std::endl;
+		data.min = GetMin(data.min, vector);
+		data.min = GetMax(data.min, vector);
+		data.sumAllVertex += vector;
 
 		vertex.push_back(vector);
 
@@ -87,7 +97,7 @@ void ModelLoader::CreateMesh(aiMesh* mesh, const aiScene* scene)
 			vector.x = mesh->mNormals[i].x;
 			vector.y = mesh->mNormals[i].y;
 			vector.z = mesh->mNormals[i].z;
-			normal.push_back(vector);
+			vertexNormal.push_back(vector);
 		}
 
 		if (mesh->mTextureCoords[0])

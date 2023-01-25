@@ -17,6 +17,7 @@ public:
 	~Mesh();
 
 	void Draw(Transform* transform);
+	void DrawNormalLine(bool, bool, Transform*);
 
 	void Initialize() override;
 	void Update() override;
@@ -25,22 +26,25 @@ public:
 	std::vector<glm::vec3> vertex;
 	std::vector<glm::vec3> vertexNormal;
 	std::vector<glm::vec3> faceNormal;
-	std::vector<glm::vec3> vertexNormalLine;
-	std::vector<glm::vec3> faceNormalLine;
 	std::vector<glm::vec2> textureCoordinate;
 	std::vector<unsigned int> indices;
+	std::vector<glm::vec3> vertexNormalLine;
+	std::vector<glm::vec3> faceNormalLine;
 
 	bool UseDeferredRendering;
 	std::string Name;
+	Shader* shader;
+
+private:
 	unsigned int VAO;
 	unsigned int VBO[3];
 	unsigned int EBO;
-	Shader* shader;
-	// Shader?
+	unsigned int lineVAO[2];
+	unsigned int lineVBO[2];
 
-private:
-	void CreateBuffers();
-	void BindBuffer(int index);
+	void CreateModelBuffers();
+	void CreateLineBuffers();
 	void CreateFaceNormal();
 	void CreateSphericalUV();
+	void CreateNormalLines();
 };

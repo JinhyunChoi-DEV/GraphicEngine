@@ -175,7 +175,6 @@ namespace
 
 		std::string tempCode = versionCode + GetShaderCode(filePath);
 		const char* code = tempCode.c_str();
-		std::cout << code << std::endl;
 		glShaderSource(shader, 1, &code, nullptr);
 		glCompileShader(shader);
 

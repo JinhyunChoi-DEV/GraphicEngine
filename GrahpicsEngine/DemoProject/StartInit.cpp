@@ -19,7 +19,8 @@ int main(void)
 	Scene* scene = new Scene();
 
 	shaderM->Compile("Default", "Solid.vert", "Solid.frag");
-	modelLoader->Load("Test", "cube2.obj");
+	shaderM->Compile("Line", "Line.vert", "Line.frag");
+	modelLoader->Load("Test", "bunny_high_poly.obj");
 
 	// Init
 	app->Initialize();

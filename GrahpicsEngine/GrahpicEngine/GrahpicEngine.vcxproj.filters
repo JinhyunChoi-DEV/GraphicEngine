@@ -104,5 +104,8 @@
     <ClInclude Include="Graphic.h">
       <Filter>Graphic</Filter>
     </ClInclude>
+    <ClInclude Include="ModelTransformFixer.h">
+      <Filter>ModelLoader</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

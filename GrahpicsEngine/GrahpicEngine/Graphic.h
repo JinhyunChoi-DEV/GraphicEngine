@@ -15,6 +15,7 @@ public:
 
 	void AddCamera(Camera*);
 	void DeleteCamera(Camera*);
+	const Camera* MainCamera();
 
 	glm::vec2 ScreenSize;
 private:

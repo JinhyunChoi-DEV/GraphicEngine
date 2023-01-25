@@ -5,8 +5,9 @@
 #include "ShaderManager.h"
 #include "Transform.h"
 
+//TODO: think about Name variable
 Mesh::Mesh(std::vector<glm::vec3> vertex_, std::vector<glm::vec3> normal_,
-	std::vector<glm::vec2> uv_, std::vector<unsigned> indices_)
+	std::vector<glm::vec2> uv_, std::vector<unsigned int> indices_)
 {
 	vertex = vertex_;
 	vertexNormal = normal_;
@@ -17,18 +18,26 @@ Mesh::Mesh(std::vector<glm::vec3> vertex_, std::vector<glm::vec3> normal_,
 	if (textureCoordinate.size() <= 0)
 		CreateSphericalUV();
 
-	CreateBuffers();
+	CreateFaceNormal();
+	CreateNormalLines();
+	CreateModelBuffers();
+	CreateLineBuffers();
 }
 
 Mesh::Mesh(Mesh& copy)
 {
 	vertex = copy.vertex;
 	vertexNormal = copy.vertexNormal;
+	faceNormal = copy.faceNormal;
 	textureCoordinate = copy.textureCoordinate;
 	indices = copy.indices;
+	vertexNormalLine = copy.vertexNormalLine;
+	faceNormalLine = copy.faceNormalLine;
+
 	shader = SHADERS->Get("Default");
 
-	CreateBuffers();
+	CreateModelBuffers();
+	CreateLineBuffers();
 }
 
 Mesh::~Mesh()
@@ -36,6 +45,8 @@ Mesh::~Mesh()
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(3, &VBO[0]);
 	glDeleteBuffers(1, &EBO);
+	glDeleteVertexArrays(2, lineVAO);
+	glDeleteBuffers(2, lineVBO);
 }
 
 void Mesh::Draw(Transform* transform)
@@ -44,8 +55,33 @@ void Mesh::Draw(Transform* transform)
 	shader->Set("model", transform->GetTransform());
 
 	glBindVertexArray(VAO);
+
 	glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_INT, nullptr);
+
 	glBindVertexArray(0);
+}
+
+void Mesh::DrawNormalLine(bool drawVertexNormal, bool drawFaceNormal, Transform* transform)
+{
+	auto shader_ = SHADERS->Get("Line");
+	shader_->Use();
+	shader_->Set("model", transform->GetTransform());
+
+	if (drawVertexNormal)
+	{
+		shader_->Set("lineColor", glm::vec3(0, 1, 0));
+		glBindVertexArray(lineVAO[0]);
+		glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(vertexNormalLine.size()));
+		glBindVertexArray(0);
+	}
+
+	if (drawFaceNormal)
+	{
+		shader_->Set("lineColor", glm::vec3(0, 0, 1));
+		glBindVertexArray(lineVAO[1]);
+		glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(faceNormalLine.size()));
+		glBindVertexArray(0);
+	}
 }
 
 void Mesh::Initialize()
@@ -62,65 +98,55 @@ void Mesh::Delete()
 
 }
 
-void Mesh::CreateBuffers()
+void Mesh::CreateModelBuffers()
 {
 	glGenVertexArrays(1, &VAO);
-	glGenBuffers(3, &VBO[0]);
+	glGenBuffers(3, VBO);
 	glGenBuffers(1, &EBO);
 
 	glBindVertexArray(VAO);
 
-	for (int i = 0; i < 3; ++i)
-		BindBuffer(i);
+	// position
+	glBindBuffer(GL_ARRAY_BUFFER, VBO[0]);
+	glBufferData(GL_ARRAY_BUFFER, vertex.size() * sizeof(glm::vec3), vertex.data(), GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+	glEnableVertexAttribArray(0);
 
+	// normal
+	glBindBuffer(GL_ARRAY_BUFFER, VBO[1]);
+	glBufferData(GL_ARRAY_BUFFER, vertexNormal.size() * sizeof(glm::vec3), vertexNormal.data(), GL_STATIC_DRAW);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+	glEnableVertexAttribArray(1);
+
+	// texture
+	glBindBuffer(GL_ARRAY_BUFFER, VBO[2]);
+	glBufferData(GL_ARRAY_BUFFER, textureCoordinate.size() * sizeof(glm::vec2), textureCoordinate.data(), GL_STATIC_DRAW);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+	glEnableVertexAttribArray(2);
+
+	// ebo
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
+
 	glBindVertexArray(0);
-}
-
-void Mesh::BindBuffer(int index)
-{
-	glBindBuffer(GL_ARRAY_BUFFER, VBO[index]);
-
-	// 1: vertex, 2: normal, 3: textureCoordinate
-	switch (index)
-	{
-	case 0:
-	{
-		glBufferData(GL_ARRAY_BUFFER, (sizeof(glm::vec3) * vertex.size()), vertex.data(), GL_STATIC_DRAW);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
-		glEnableVertexAttribArray(0);
-	}
-	break;
-
-	case 1:
-	{
-		glBufferData(GL_ARRAY_BUFFER, (sizeof(glm::vec3) * faceNormal.size()), faceNormal.data(), GL_STATIC_DRAW);
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
-		glEnableVertexAttribArray(1);
-	}
-	break;
-
-	case 2:
-	{
-		glBufferData(GL_ARRAY_BUFFER, (sizeof(glm::vec2) * textureCoordinate.size()), textureCoordinate.data(), GL_STATIC_DRAW);
-		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
-		glEnableVertexAttribArray(2);
-	}
-	break;
-
-	default:
-		break;
-	}
 }
 
 void Mesh::CreateFaceNormal()
 {
-	//TODO:
-	/*for (auto normal : vertexNormal)
+	for (unsigned i = 0; i < indices.size(); i += 3)
 	{
-		auto index = vn
-	}*/
+		auto first = vertex[i];
+		auto second = vertex[i + 1];
+		auto third = vertex[i + 2];
+
+		auto v1 = second - first;
+		auto v2 = third - first;
+
+		auto normal = glm::normalize(glm::cross(v1, v2));
+
+		for (int j = 0; j < 3; ++j)
+			faceNormal.push_back(normal);
+	}
 }
 
 void Mesh::CreateSphericalUV()
@@ -142,3 +168,49 @@ void Mesh::CreateSphericalUV()
 		textureCoordinate.push_back(glm::vec2(u, v));
 	}
 }
+
+void Mesh::CreateNormalLines()
+{
+	for (auto i : indices)
+	{
+		auto v1 = vertex[i];
+		auto v2 = v1 + (vertexNormal[i] * 0.15f);
+		vertexNormalLine.insert(vertexNormalLine.end(), { v1,v2 });
+	}
+
+	for (unsigned i = 0; i < indices.size(); i += 3)
+	{
+		auto first = indices[i];
+		auto second = indices[i + 1];
+		auto third = indices[i + 2];
+
+		auto v1 = (vertex[first] + vertex[second] + vertex[third]) / 3.0f;
+
+		for (int j = 0; j < 3; ++j)
+		{
+			auto v2 = v1 + faceNormal[j] * 0.15f;
+			faceNormalLine.insert(faceNormalLine.end(), { v1,v2 });
+		}
+	}
+}
+
+void Mesh::CreateLineBuffers()
+{
+	glGenVertexArrays(2, lineVAO);
+	glGenBuffers(2, lineVBO);
+
+	glBindVertexArray(lineVAO[0]);
+	glBindBuffer(GL_ARRAY_BUFFER, lineVBO[0]);
+	glBufferData(GL_ARRAY_BUFFER, (sizeof(glm::vec3) * vertexNormalLine.size()), vertexNormalLine.data(), GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+	glEnableVertexAttribArray(0);
+	glBindVertexArray(0);
+
+	glBindVertexArray(lineVAO[1]);
+	glBindBuffer(GL_ARRAY_BUFFER, lineVBO[1]);
+	glBufferData(GL_ARRAY_BUFFER, (sizeof(glm::vec3) * faceNormalLine.size()), faceNormalLine.data(), GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+	glEnableVertexAttribArray(0);
+	glBindVertexArray(0);
+}
+

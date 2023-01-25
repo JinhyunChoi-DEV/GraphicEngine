@@ -25,7 +25,7 @@ void Graphic::Initialize()
 		Camera* camera = new Camera(obj);
 		obj->AddComponent(camera);
 		OBJMANAGER->Add(obj);
-		obj->transform->Position = { 0, 0, 15 };
+		obj->transform->Position = { 0, 0, 5 };
 	}
 
 	glEnable(GL_DEPTH_TEST);
@@ -64,6 +64,7 @@ void Graphic::Update()
 		{
 			auto mesh = obj->GetComponent<Mesh>();
 			mesh->Draw(obj->transform);
+			mesh->DrawNormalLine(false, false, obj->transform);
 		}
 
 		//TODO: fix logic for forward Rendering
@@ -110,6 +111,11 @@ void Graphic::DeleteCamera(Camera* target)
 
 		++it;
 	}
+}
+
+const Camera* Graphic::MainCamera()
+{
+	return mainCamera;
 }
 
 void Graphic::InitializeUniformBuffer()

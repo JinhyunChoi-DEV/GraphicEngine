@@ -1,10 +1,10 @@
 #pragma once
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
-#include <assimp/postprocess.h>
 #include <string>
 #include <unordered_map>
 #include <memory>
+#include "ModelTransformFixer.h"
 
 class Mesh;
 
@@ -23,11 +23,13 @@ private:
 	void CreateMesh(aiMesh* mesh, const aiScene* scene);
 
 	Assimp::Importer import;
-	const std::string rootPath = "../models/";
+	const std::string rootPath = "models/";
 	bool IsExist(std::string name);
 
+	FixerData data;
 	std::vector<glm::vec3> vertex;
-	std::vector<glm::vec3> normal;
+	std::vector<glm::vec3> vertexNormal;
+	std::vector<glm::vec3> faceNormal;
 	std::vector<glm::vec2> textureCoordinate;
 	std::vector<unsigned int> indices;
 

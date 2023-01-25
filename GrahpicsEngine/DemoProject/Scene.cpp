@@ -1,5 +1,8 @@
 #include "Scene.h"
 
+#include "Camera.h"
+#include "Graphic.h"
+#include "Input.h"
 #include "Mesh.h"
 #include "ObjectManager.h"
 #include "ModelLoader.h"
@@ -9,7 +12,9 @@ void Scene::Initialize()
 {
 	auto mesh = *MODELLOAD->Get("Test");
 	mainObject = new Object();
-	mainObject->AddComponent(new Mesh(mesh));
+	auto newMesh = new Mesh(mesh);
+	newMesh->UseDeferredRendering = true;
+	mainObject->AddComponent(newMesh);
 
 	OBJMANAGER->Add(mainObject);
 }

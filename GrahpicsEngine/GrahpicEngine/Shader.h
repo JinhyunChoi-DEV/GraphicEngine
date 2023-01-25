@@ -33,7 +33,7 @@ public:
 private:
 	void Compile();
 
-	const std::string filePath = "../shaders/";
+	const std::string filePath = "shaders/";
 	const std::string versionText = "#version 430 core\n";
 	std::string vertex = "";
 	std::string fragment = "";
