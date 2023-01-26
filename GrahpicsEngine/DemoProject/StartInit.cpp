@@ -1,11 +1,29 @@
 #include "Application.h"
 #include "Graphic.h"
 #include "Input.h"
+#include "Mesh.h"
 #include "ModelLoader.h"
-#include "Object.h"
+#include "ModelMesh.h"
 #include "ObjectManager.h"
 #include "Scene.h"
 #include "ShaderManager.h"
+#include <typeinfo>
+
+class A
+{
+public:
+	virtual ~A() = default;
+};
+
+class B : public A
+{
+
+};
+
+class C : public B
+{
+
+};
 
 int main(void)
 {
@@ -20,7 +38,7 @@ int main(void)
 
 	shaderM->Compile("Default", "Solid.vert", "Solid.frag");
 	shaderM->Compile("Line", "Line.vert", "Line.frag");
-	modelLoader->Load("Test", "bunny_high_poly.obj");
+	modelLoader->Load("Test", "cube2.obj");
 
 	// Init
 	app->Initialize();

@@ -1,12 +1,12 @@
 ﻿#include <glad/glad.h>
 #include <glm/gtc/type_ptr.hpp>
 
-#include "Mesh.h"
+#include "ModelMesh.h"
 #include "ShaderManager.h"
 #include "Transform.h"
 
 //TODO: think about Name variable
-Mesh::Mesh(std::vector<glm::vec3> vertex_, std::vector<glm::vec3> normal_,
+ModelMesh::ModelMesh(std::vector<glm::vec3> vertex_, std::vector<glm::vec3> normal_,
 	std::vector<glm::vec2> uv_, std::vector<unsigned int> indices_)
 {
 	vertex = vertex_;
@@ -14,6 +14,8 @@ Mesh::Mesh(std::vector<glm::vec3> vertex_, std::vector<glm::vec3> normal_,
 	textureCoordinate = uv_;
 	indices = indices_;
 	shader = SHADERS->Get("Default");
+	DrawFaceNormal = false;
+	DrawVertexNormal = false;
 
 	if (textureCoordinate.size() <= 0)
 		CreateSphericalUV();
@@ -24,7 +26,7 @@ Mesh::Mesh(std::vector<glm::vec3> vertex_, std::vector<glm::vec3> normal_,
 	CreateLineBuffers();
 }
 
-Mesh::Mesh(Mesh& copy)
+ModelMesh::ModelMesh(ModelMesh& copy)
 {
 	vertex = copy.vertex;
 	vertexNormal = copy.vertexNormal;
@@ -33,14 +35,16 @@ Mesh::Mesh(Mesh& copy)
 	indices = copy.indices;
 	vertexNormalLine = copy.vertexNormalLine;
 	faceNormalLine = copy.faceNormalLine;
+	DrawFaceNormal = false;
+	DrawVertexNormal = false;
 
-	shader = SHADERS->Get("Default");
+	shader = copy.shader;
 
 	CreateModelBuffers();
 	CreateLineBuffers();
 }
 
-Mesh::~Mesh()
+ModelMesh::~ModelMesh()
 {
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(3, &VBO[0]);
@@ -49,56 +53,49 @@ Mesh::~Mesh()
 	glDeleteBuffers(2, lineVBO);
 }
 
-void Mesh::Draw(Transform* transform)
+void ModelMesh::Draw(Transform* transform)
+{
+	DrawModel(transform);
+	DrawNormalLine(transform);
+}
+
+void ModelMesh::DrawModel(Transform* transform)
 {
 	shader->Use();
 	shader->Set("model", transform->GetTransform());
 
 	glBindVertexArray(VAO);
-
 	glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_INT, nullptr);
-
 	glBindVertexArray(0);
 }
 
-void Mesh::DrawNormalLine(bool drawVertexNormal, bool drawFaceNormal, Transform* transform)
+void ModelMesh::DrawNormalLine(Transform* transform)
 {
+	if (vertexNormalLine.empty() || faceNormalLine.empty())
+		return;
+
 	auto shader_ = SHADERS->Get("Line");
 	shader_->Use();
 	shader_->Set("model", transform->GetTransform());
 
-	if (drawVertexNormal)
+	if (DrawVertexNormal)
 	{
-		shader_->Set("lineColor", glm::vec3(0, 1, 0));
+		shader_->Set("color", glm::vec3(0, 1, 0));
 		glBindVertexArray(lineVAO[0]);
 		glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(vertexNormalLine.size()));
 		glBindVertexArray(0);
 	}
 
-	if (drawFaceNormal)
+	if (DrawFaceNormal)
 	{
-		shader_->Set("lineColor", glm::vec3(0, 0, 1));
+		shader_->Set("color", glm::vec3(0, 0, 1));
 		glBindVertexArray(lineVAO[1]);
 		glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(faceNormalLine.size()));
 		glBindVertexArray(0);
 	}
 }
 
-void Mesh::Initialize()
-{
-}
-
-void Mesh::Update()
-{
-	//DO not call Draw Function, I want to explicitly call Draw function at Graphics.cpp - Update()
-}
-
-void Mesh::Delete()
-{
-
-}
-
-void Mesh::CreateModelBuffers()
+void ModelMesh::CreateModelBuffers()
 {
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(3, VBO);
@@ -131,7 +128,7 @@ void Mesh::CreateModelBuffers()
 	glBindVertexArray(0);
 }
 
-void Mesh::CreateFaceNormal()
+void ModelMesh::CreateFaceNormal()
 {
 	for (unsigned i = 0; i < indices.size(); i += 3)
 	{
@@ -149,7 +146,7 @@ void Mesh::CreateFaceNormal()
 	}
 }
 
-void Mesh::CreateSphericalUV()
+void ModelMesh::CreateSphericalUV()
 {
 	for (auto position : vertex)
 	{
@@ -169,7 +166,7 @@ void Mesh::CreateSphericalUV()
 	}
 }
 
-void Mesh::CreateNormalLines()
+void ModelMesh::CreateNormalLines()
 {
 	for (auto i : indices)
 	{
@@ -178,6 +175,7 @@ void Mesh::CreateNormalLines()
 		vertexNormalLine.insert(vertexNormalLine.end(), { v1,v2 });
 	}
 
+	// the Assimp add indices based on face, so i+=3 can do it
 	for (unsigned i = 0; i < indices.size(); i += 3)
 	{
 		auto first = indices[i];
@@ -188,17 +186,18 @@ void Mesh::CreateNormalLines()
 
 		for (int j = 0; j < 3; ++j)
 		{
-			auto v2 = v1 + faceNormal[j] * 0.15f;
+			auto v2 = v1 + faceNormal[i + j] * 0.15f;
 			faceNormalLine.insert(faceNormalLine.end(), { v1,v2 });
 		}
 	}
 }
 
-void Mesh::CreateLineBuffers()
+void ModelMesh::CreateLineBuffers()
 {
 	glGenVertexArrays(2, lineVAO);
 	glGenBuffers(2, lineVBO);
 
+	// vertex normal line
 	glBindVertexArray(lineVAO[0]);
 	glBindBuffer(GL_ARRAY_BUFFER, lineVBO[0]);
 	glBufferData(GL_ARRAY_BUFFER, (sizeof(glm::vec3) * vertexNormalLine.size()), vertexNormalLine.data(), GL_STATIC_DRAW);
@@ -206,6 +205,7 @@ void Mesh::CreateLineBuffers()
 	glEnableVertexAttribArray(0);
 	glBindVertexArray(0);
 
+	// face normal line
 	glBindVertexArray(lineVAO[1]);
 	glBindBuffer(GL_ARRAY_BUFFER, lineVBO[1]);
 	glBufferData(GL_ARRAY_BUFFER, (sizeof(glm::vec3) * faceNormalLine.size()), faceNormalLine.data(), GL_STATIC_DRAW);

@@ -1,8 +1,8 @@
-uniform vec3 lineColor;
+uniform vec3 color;
 
-out vec4 FragColor;
+out vec4 outputColor;
 
 void main()
 {
-	FragColor = vec4(lineColor, 1.0);
+	outputColor = vec4(color, 1.0);
 }

@@ -4,8 +4,10 @@
 #include <vector>
 #include <string>
 #include "IComponent.h"
+#include <iostream>
 
 class Transform;
+class Mesh;
 
 class Object
 {
@@ -23,9 +25,11 @@ public:
 	COMPONENT* GetComponent();
 
 	Transform* transform;
+	Mesh* mesh;
 	bool IsActive;
 	std::string Name;
 private:
+
 	void SettingDefault(const std::string& name);
 	std::vector<IComponent*> components;
 };

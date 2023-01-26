@@ -11,7 +11,11 @@ Transform::Transform()
 
 const glm::mat4 Transform::GetTransform()
 {
-	auto rotateQuat = glm::quat(Rotation);
+	float xAngle = glm::radians(Rotation.x);
+	float yAngle = glm::radians(Rotation.y);
+	float zAngle = glm::radians(Rotation.z);
+	glm::vec3 rotationRadians = glm::vec3(xAngle, yAngle, zAngle);
+	auto rotateQuat = glm::quat(rotationRadians);
 
 	glm::mat4 identicalMatrix = glm::mat4(1.0f);
 	glm::mat4 positionMatrix = glm::translate(identicalMatrix, Position);

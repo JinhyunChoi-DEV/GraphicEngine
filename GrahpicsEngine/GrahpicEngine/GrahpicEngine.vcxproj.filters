@@ -28,6 +28,9 @@
     <Filter Include="Graphic\Camera">
       <UniqueIdentifier>{62dc51f7-9581-4b50-86c9-43edae324954}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Light">
+      <UniqueIdentifier>{31fceed6-3da3-4939-a5c9-c8272ef0b85c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModelLoader.cpp">
@@ -48,7 +51,7 @@
     <ClCompile Include="..\libs\glad\glad.c">
       <Filter>Graphic</Filter>
     </ClCompile>
-    <ClCompile Include="Mesh.cpp">
+    <ClCompile Include="ModelMesh.cpp">
       <Filter>Mesh</Filter>
     </ClCompile>
     <ClCompile Include="Object.cpp">
@@ -65,6 +68,15 @@
     </ClCompile>
     <ClCompile Include="Graphic.cpp">
       <Filter>Graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="Light.cpp">
+      <Filter>Light</Filter>
+    </ClCompile>
+    <ClCompile Include="LineMesh.cpp">
+      <Filter>Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="StaticMesh.cpp">
+      <Filter>Mesh</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -83,7 +95,7 @@
     <ClInclude Include="Input.h">
       <Filter>Input</Filter>
     </ClInclude>
-    <ClInclude Include="Mesh.h">
+    <ClInclude Include="ModelMesh.h">
       <Filter>Mesh</Filter>
     </ClInclude>
     <ClInclude Include="IComponent.h">
@@ -106,6 +118,18 @@
     </ClInclude>
     <ClInclude Include="ModelTransformFixer.h">
       <Filter>ModelLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>Light</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="LineMesh.h">
+      <Filter>Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="StaticMesh.h">
+      <Filter>Mesh</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

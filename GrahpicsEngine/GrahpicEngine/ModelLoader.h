@@ -6,7 +6,7 @@
 #include <memory>
 #include "ModelTransformFixer.h"
 
-class Mesh;
+class ModelMesh;
 
 class ModelLoader
 {
@@ -15,7 +15,7 @@ public:
 	~ModelLoader();
 
 	void Load(std::string name, std::string fileName);
-	Mesh* Get(std::string name);
+	ModelMesh* Get(std::string name);
 
 private:
 	bool Completed(const aiScene* scene);
@@ -33,7 +33,7 @@ private:
 	std::vector<glm::vec2> textureCoordinate;
 	std::vector<unsigned int> indices;
 
-	std::unordered_map<std::string, std::unique_ptr<Mesh>> models;
+	std::unordered_map<std::string, std::unique_ptr<ModelMesh>> models;
 };
 
 extern ModelLoader* MODELLOAD;

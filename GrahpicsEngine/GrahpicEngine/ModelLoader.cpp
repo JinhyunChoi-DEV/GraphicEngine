@@ -3,7 +3,7 @@
 #include <glm/glm.hpp>
 
 #include "ModelLoader.h"
-#include "Mesh.h"
+#include "ModelMesh.h"
 
 ModelLoader* MODELLOAD = nullptr;
 
@@ -40,11 +40,11 @@ void ModelLoader::Load(std::string name, std::string fileName)
 	CreateNode(scene->mRootNode, scene);
 
 	vertex = SetToUnitVertex(data, vertex);
-	Mesh* mesh = new Mesh(vertex, vertexNormal, textureCoordinate, indices);
+	ModelMesh* mesh = new ModelMesh(vertex, vertexNormal, textureCoordinate, indices);
 	models.insert(std::make_pair(name, mesh));
 }
 
-Mesh* ModelLoader::Get(std::string name)
+ModelMesh* ModelLoader::Get(std::string name)
 {
 	if (IsExist(name))
 		return models[name].get();
