@@ -21,13 +21,14 @@ void Graphic::Initialize()
 {
 	InitializeUniformBuffer();
 
+	//TODO: just make in scene code and update function check if it is null then make
 	if (mainCamera == nullptr)
 	{
 		Object* obj = new Object("Main Camera");
 		Camera* camera = new Camera(obj);
 		obj->AddComponent(camera);
 		OBJMANAGER->Add(obj);
-		obj->transform->Position = { 0, 1, 7 };
+		obj->transform->Position = { 0, 1, 15 };
 	}
 
 	LightData.attenuationConstant = { 1.0f, 0.22f, 0.2f };
@@ -41,13 +42,15 @@ void Graphic::Initialize()
 
 void Graphic::Update()
 {
-	glClearColor(0, 0, 0, 1);
+	glClearColor(LightData.fog.r, LightData.fog.g, LightData.fog.b, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glViewport(0, 0, static_cast<int>(ScreenSize.x), static_cast<int>(ScreenSize.y));
 
 	auto objects = OBJMANAGER->GetAll();
 	std::vector<Object*> deferredRenderTargets;
 	std::vector<Object*> forwardRenderTargets;
+
+	UpdateLightingUniformBuffer();
 
 	for (auto const& cam : cameras)
 	{
@@ -77,7 +80,15 @@ void Graphic::Update()
 			mesh->Draw(obj->transform);
 		}
 
+
 		//TODO: fix logic for forward Rendering
+		// for the Assignment
+		for (auto const& obj : deferredRenderTargets)
+		{
+			auto mesh = obj->mesh;
+			mesh->DrawDebug(obj->transform);
+		}
+
 		for (auto const& obj : forwardRenderTargets)
 		{
 			auto mesh = obj->mesh;
@@ -180,9 +191,14 @@ void Graphic::UpdateTransformUniformBuffer(Camera* cam) const
 
 void Graphic::UpdateLightingUniformBuffer()
 {
-	int activeCount = (int)lights.size();
+	int activeCount = 0;
+	for (auto const& light : lights)
+	{
+		if (light->IsActive)
+			activeCount++;
+	}
 
-	glBindBuffer(GL_UNIFORM_BUFFER, uboLighting);;
+	glBindBuffer(GL_UNIFORM_BUFFER, uboLighting);
 
 	GLint offset = 0;
 	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(unsigned int), &activeCount);
@@ -221,4 +237,6 @@ void Graphic::UpdateLightingUniformBuffer()
 		glBufferSubData(GL_UNIFORM_BUFFER, offset, sizeof(float), &light->Fallout);
 		offset += 12;
 	}
+
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }

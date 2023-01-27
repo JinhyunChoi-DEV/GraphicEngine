@@ -18,11 +18,12 @@ public:
 	const glm::mat4 View();
 	const glm::mat4 Projection();
 
+	glm::vec3 Position;
 	bool IsMain;
 	bool UseConstantRatio;
 	float Near, Far, Fov;
 private:
 	Transform* transform;
-	glm::vec3 position, back, up, right;
+	glm::vec3 back, up, right;
 	float ratio, width, height;
 };

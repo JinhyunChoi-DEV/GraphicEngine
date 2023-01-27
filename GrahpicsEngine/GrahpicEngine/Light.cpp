@@ -1,9 +1,12 @@
 #include "Light.h"
 #include "Graphic.h"
+#include "Object.h"
 
 
-Light::Light(Transform* transform_)
+Light::Light(Object* root_)
 {
+	root = root_;
+
 	Direction = glm::vec3(0);
 	Ambient = glm::vec3(1);
 	Diffuse = glm::vec3(1);
@@ -12,7 +15,8 @@ Light::Light(Transform* transform_)
 	InnerAngle = 0.0f;
 	OuterAngle = 0.0f;
 	Fallout = 1.0f;
-	transform = transform_;
+	transform = root_->transform;
+	IsActive = root_->IsActive;
 }
 
 Light::~Light()
@@ -27,6 +31,7 @@ void Light::Initialize()
 
 void Light::Update()
 {
+	IsActive = root->IsActive;
 }
 
 void Light::Delete()

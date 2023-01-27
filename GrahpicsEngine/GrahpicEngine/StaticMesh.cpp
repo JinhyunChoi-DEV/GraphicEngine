@@ -2,13 +2,15 @@
 #include "StaticMesh.h"
 
 #include "Shader.h"
+#include "ShaderManager.h"
 #include "Transform.h"
 
-StaticMesh::StaticMesh(std::vector<glm::vec3> vertex_, std::vector<int> indices_)
+StaticMesh::StaticMesh(std::vector<glm::vec3> vertex_, std::vector<unsigned int> indices_)
 {
 	vertex = vertex_;
-	indices = indices;
+	indices = indices_;
 	Color = glm::vec3(1, 1, 1);
+	shader = SHADERS->Get("Default");
 
 	CreateBuffer();
 }

@@ -9,22 +9,6 @@
 #include "ShaderManager.h"
 #include <typeinfo>
 
-class A
-{
-public:
-	virtual ~A() = default;
-};
-
-class B : public A
-{
-
-};
-
-class C : public B
-{
-
-};
-
 int main(void)
 {
 	// Constructor
@@ -38,7 +22,7 @@ int main(void)
 
 	shaderM->Compile("Default", "Solid.vert", "Solid.frag");
 	shaderM->Compile("Line", "Line.vert", "Line.frag");
-	modelLoader->Load("Test", "cube2.obj");
+	shaderM->Compile("Phong", "Phong Shading.vert", "Phong Shading.frag");
 
 	// Init
 	app->Initialize();

@@ -11,11 +11,11 @@ public:
 	virtual ~Mesh();
 
 	virtual void Draw(Transform* transform) = 0;
+	virtual void DrawDebug(Transform* transform) = 0;
 
 	bool UseDeferredRendering;
 	std::string Name;
 	Shader* shader;
-	Mesh* childMesh;
 
 protected:
 	std::vector<glm::vec3> vertex;

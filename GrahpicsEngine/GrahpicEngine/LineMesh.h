@@ -10,6 +10,7 @@ public:
 	~LineMesh();
 
 	void Draw(Transform* transform) override;
+	void DrawDebug(Transform* transform) override {}
 
 	glm::vec3 Color;
 private:

@@ -2,6 +2,9 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClInclude Include="Scene.h" />
+    <ClInclude Include="SphereCreator.h" />
+    <ClInclude Include="OrbitLineCreator.h" />
+    <ClInclude Include="QuadCreator.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="StartInit.cpp" />

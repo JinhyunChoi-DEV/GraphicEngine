@@ -28,7 +28,6 @@ void ModelLoader::Load(std::string name, std::string fileName)
 
 	vertex.clear();
 	vertexNormal.clear();
-	faceNormal.clear();
 	textureCoordinate.clear();
 	indices.clear();
 

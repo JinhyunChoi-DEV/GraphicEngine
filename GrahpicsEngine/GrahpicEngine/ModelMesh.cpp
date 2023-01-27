@@ -2,6 +2,9 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "ModelMesh.h"
+
+#include "Camera.h"
+#include "Graphic.h"
 #include "ShaderManager.h"
 #include "Transform.h"
 
@@ -56,6 +59,11 @@ ModelMesh::~ModelMesh()
 void ModelMesh::Draw(Transform* transform)
 {
 	DrawModel(transform);
+}
+
+// for the assignment
+void ModelMesh::DrawDebug(Transform* transform)
+{
 	DrawNormalLine(transform);
 }
 
@@ -63,6 +71,7 @@ void ModelMesh::DrawModel(Transform* transform)
 {
 	shader->Use();
 	shader->Set("model", transform->GetTransform());
+	shader->Set("cameraPosition", GRAPHIC->MainCamera()->Position);
 
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_INT, nullptr);

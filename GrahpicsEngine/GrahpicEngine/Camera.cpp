@@ -20,7 +20,7 @@ Camera::Camera(Object* obj)
 
 	IsMain = false;
 	UseConstantRatio = false;
-	position = transform->Position;
+	Position = transform->Position;
 
 	back = glm::vec3(0, 0, 1);
 	right = glm::cross(-back, glm::vec3{ 0,1,0 });
@@ -42,7 +42,7 @@ void Camera::Initialize()
 void Camera::Update()
 {
 	// Update Camera Position
-	position = transform->Position;
+	Position = transform->Position;
 
 	// Update Viewport Size
 	width = GRAPHIC->ScreenSize.x;
@@ -68,5 +68,5 @@ const glm::mat4 Camera::Projection()
 const glm::mat4 Camera::View()
 {
 	auto look = -back;
-	return glm::lookAt(position, position + look, up);
+	return glm::lookAt(Position, Position + look, up);
 }

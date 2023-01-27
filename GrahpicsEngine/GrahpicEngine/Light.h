@@ -7,12 +7,13 @@ enum class LightType
 	Directional = 0, Point, Spotlight, Count
 };
 
+class Object;
 class Transform;
 
 class Light : public IComponent
 {
 public:
-	Light(Transform*);
+	Light(Object*);
 	~Light();
 
 	void Initialize() override;
@@ -28,6 +29,8 @@ public:
 	float InnerAngle;
 	float OuterAngle;
 	float Fallout;
+	bool IsActive;
 
 private:
+	Object* root;
 };
