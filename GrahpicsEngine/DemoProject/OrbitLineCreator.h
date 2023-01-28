@@ -39,5 +39,6 @@ inline Mesh* CreateOrbitLine(float radius, int sector)
 	}
 
 	SetToUnitVertex(data, positions);
+	auto result = new LineMesh(positions);
 	return new LineMesh(positions);
 }

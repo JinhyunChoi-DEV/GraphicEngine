@@ -1,9 +1,6 @@
 #pragma once
 #include <vector>
-#include <string>
 #include <glm/glm.hpp>
-
-#include "Shader.h"
 #include "Mesh.h"
 
 class Transform;

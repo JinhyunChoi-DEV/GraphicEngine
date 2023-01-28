@@ -11,9 +11,9 @@ public:
 	void Update();
 	void Close();
 
-	bool IsClose() { return glfwWindowShouldClose(mainWindow); }
 	const GLFWwindow* GetWindow() { return mainWindow; }
 
+	bool IsClose;
 private:
 	GLFWwindow* mainWindow = nullptr;
 };

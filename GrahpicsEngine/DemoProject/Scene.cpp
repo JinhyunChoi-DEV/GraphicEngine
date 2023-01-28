@@ -1,6 +1,8 @@
 ﻿#include <filesystem>
 
 #include "Scene.h"
+
+#include "Camera.h"
 #include "Input.h"
 #include "Light.h"
 #include "ModelMesh.h"
@@ -10,26 +12,38 @@
 #include "QuadCreator.h"
 #include "ShaderManager.h"
 #include "SphereCreator.h"
+#include "TextureLoader.h"
 #include "Transform.h"
 
 void Scene::Initialize()
 {
+	TEXTURES->Load("Diff", "metal_roof_diff_512x512.png");
+	TEXTURES->Load("Spec", "metal_roof_spec_512x512.png");
 	LoadAllModel();
 	rotationTime = 0.0f;
 	lastUpdateTime = 0.0f;
-	activeLightCount = 3;
+	activeLightCount = 5;
 
 	mainObject = new Object("Main Object");
-	auto mesh = new ModelMesh(*MODELLOAD->Get("cube2"));
-	mesh->DrawFaceNormal = true;
-	mesh->DrawVertexNormal = true;
+	auto mesh = new ModelMesh(*MODELLOAD->Get("bunny_high_poly"));
+	//mesh->DrawFaceNormal = true;
+	//mesh->DrawVertexNormal = true;
 	mesh->UseDeferredRendering = true;
+	mesh->material->UseGpuUV = true;
+	mesh->material->AmbientColor = glm::vec3(0);
+	mesh->material->DiffuseColor = glm::vec3(1);
+	mesh->material->SpecularColor = glm::vec3(1);
+	mesh->material->DiffuseTexture = TEXTURES->Get("Diff");
 	mesh->shader = SHADERS->Get("Phong");
 	mainObject->mesh = mesh;
 	OBJMANAGER->Add(mainObject);
 
 	auto floor = new Object("Floor");
 	floor->mesh = CreateQuad();
+	floor->mesh->UseDeferredRendering = true;
+	floor->mesh->material->AmbientColor = glm::vec3(0);
+	floor->mesh->material->DiffuseColor = glm::vec3(0.8f);
+	floor->mesh->material->SpecularColor = glm::vec3(0.8f);
 	floor->mesh->shader = SHADERS->Get("Phong");
 	floor->transform->Position = glm::vec3(0, -1.5, 0);
 	floor->transform->Scale = glm::vec3(10);
@@ -38,6 +52,12 @@ void Scene::Initialize()
 
 	CreateLight();
 	CreateOrbit();
+
+	Object* obj = new Object("Main Camera");
+	Camera* camera = new Camera(obj);
+	obj->AddComponent(camera);
+	OBJMANAGER->Add(obj);
+	obj->transform->Position = { 0, 1, 10 };
 }
 
 void Scene::Update()
@@ -72,10 +92,14 @@ void Scene::CreateOrbit()
 {
 	Mesh* orbitLineMesh = CreateOrbitLine(1, 50);
 	orbitLineMesh->UseDeferredRendering = true;
+	orbitLineMesh->material->AmbientColor = glm::vec3(1);
+	orbitLineMesh->material->DiffuseColor = glm::vec3(1);
+	orbitLineMesh->material->SpecularColor = glm::vec3(1);
 
 	Object* obj = new Object("orbit");
 	obj->transform->Scale = glm::vec3(5, 5, 5);
 	obj->mesh = orbitLineMesh;
+	obj->mesh->UseDeferredRendering = true;
 	OBJMANAGER->Add(obj);
 }
 

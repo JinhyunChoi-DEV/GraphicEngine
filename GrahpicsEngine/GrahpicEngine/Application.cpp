@@ -63,6 +63,8 @@ void Application::Update()
 {
 	glfwSwapBuffers(mainWindow);
 	glfwPollEvents();
+
+	IsClose = glfwWindowShouldClose(mainWindow) || INPUT->KeyTriggered(GLFW_KEY_ESCAPE);
 }
 
 void Application::Close()

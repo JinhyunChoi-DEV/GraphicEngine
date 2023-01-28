@@ -1,6 +1,7 @@
 #include <glad/glad.h>
 #include "StaticMesh.h"
 
+#include "Graphic.h"
 #include "Shader.h"
 #include "ShaderManager.h"
 #include "Transform.h"
@@ -24,9 +25,20 @@ StaticMesh::~StaticMesh()
 
 void StaticMesh::Draw(Transform* transform)
 {
-	shader->Use();
-	shader->Set("model", transform->GetTransform());
-	shader->Set("color", Color);
+	if (UseDeferredRendering)
+	{
+		auto currentShader = SHADERS->Get("GBuffer");
+		currentShader->Use();
+		currentShader->Set("model", transform->GetTransform());
+		currentShader->Set("affectedLighting", true);
+		material->Update(currentShader);
+	}
+	else
+	{
+		shader->Use();
+		shader->Set("model", transform->GetTransform());
+		shader->Set("color", Color);
+	}
 
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_INT, nullptr);

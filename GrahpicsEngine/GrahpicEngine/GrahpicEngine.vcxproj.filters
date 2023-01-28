@@ -31,6 +31,9 @@
     <Filter Include="Light">
       <UniqueIdentifier>{31fceed6-3da3-4939-a5c9-c8272ef0b85c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Material">
+      <UniqueIdentifier>{56673848-ca0a-4957-88c1-c0371889d5e6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModelLoader.cpp">
@@ -77,6 +80,18 @@
     </ClCompile>
     <ClCompile Include="StaticMesh.cpp">
       <Filter>Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="FSQMesh.cpp">
+      <Filter>Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Material.cpp">
+      <Filter>Material</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Material</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureLoader.cpp">
+      <Filter>Material</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -130,6 +145,18 @@
     </ClInclude>
     <ClInclude Include="StaticMesh.h">
       <Filter>Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="FSQMesh.h">
+      <Filter>Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Material</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Material</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureLoader.h">
+      <Filter>Material</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

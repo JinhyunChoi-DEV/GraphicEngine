@@ -4,6 +4,8 @@
 
 class Camera;
 class Light;
+class Mesh;
+class Object;
 
 struct LightGlobalData
 {
@@ -33,15 +35,24 @@ public:
 	LightGlobalData LightData;
 	glm::vec2 ScreenSize;
 private:
+	void RenderDeferred(std::vector<Object*>);
+	void RenderForward(std::vector<Object*>, std::vector<Object*>);
+
+	void InitializeDeferredRender();
 	void InitializeUniformBuffer();
 	void UpdateTransformUniformBuffer(Camera* cam) const;
 	void UpdateLightingUniformBuffer();
 
 	Camera* mainCamera;
+	Mesh* fsqMesh;
 	std::vector<Camera*> cameras;
 	std::vector<Light*> lights;
 	unsigned int uboTransform;
 	unsigned int uboLighting;
+	unsigned int gBufferFBO;
+	unsigned int* gBufferTextures;
+	unsigned int renderBufferDepth;
+	const unsigned int NUM_ATTACHMENT = 8;
 };
 
 extern Graphic* GRAPHIC;

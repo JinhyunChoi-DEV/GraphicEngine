@@ -2,8 +2,11 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "Graphic.h"
+#include "Shader.h"
+#include "Application.h"
 #include "ObjectManager.h"
 #include "Camera.h"
+#include "FSQMesh.h"
 #include "Object.h"
 #include "ModelMesh.h"
 #include "ShaderManager.h"
@@ -20,16 +23,7 @@ Graphic::Graphic()
 void Graphic::Initialize()
 {
 	InitializeUniformBuffer();
-
-	//TODO: just make in scene code and update function check if it is null then make
-	if (mainCamera == nullptr)
-	{
-		Object* obj = new Object("Main Camera");
-		Camera* camera = new Camera(obj);
-		obj->AddComponent(camera);
-		OBJMANAGER->Add(obj);
-		obj->transform->Position = { 0, 1, 15 };
-	}
+	InitializeDeferredRender();
 
 	LightData.attenuationConstant = { 1.0f, 0.22f, 0.2f };
 	LightData.globalAmbient = { 0,0,0 };
@@ -42,6 +36,15 @@ void Graphic::Initialize()
 
 void Graphic::Update()
 {
+	if (mainCamera == nullptr)
+	{
+		Object* obj = new Object("Main Camera");
+		Camera* camera = new Camera(obj);
+		obj->AddComponent(camera);
+		OBJMANAGER->Add(obj);
+		obj->transform->Position = { 0, 1, 10 };
+	}
+
 	glClearColor(LightData.fog.r, LightData.fog.g, LightData.fog.b, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glViewport(0, 0, static_cast<int>(ScreenSize.x), static_cast<int>(ScreenSize.y));
@@ -73,27 +76,8 @@ void Graphic::Update()
 				forwardRenderTargets.push_back(obj);
 		}
 
-		//TODO: fix logic for deferred Rendering 
-		for (auto const& obj : deferredRenderTargets)
-		{
-			auto mesh = obj->mesh;
-			mesh->Draw(obj->transform);
-		}
-
-
-		//TODO: fix logic for forward Rendering
-		// for the Assignment
-		for (auto const& obj : deferredRenderTargets)
-		{
-			auto mesh = obj->mesh;
-			mesh->DrawDebug(obj->transform);
-		}
-
-		for (auto const& obj : forwardRenderTargets)
-		{
-			auto mesh = obj->mesh;
-			mesh->Draw(obj->transform);
-		}
+		RenderDeferred(deferredRenderTargets);
+		RenderForward(deferredRenderTargets, forwardRenderTargets);
 	}
 }
 
@@ -156,6 +140,101 @@ void Graphic::DeleteCamera(Camera* target)
 const Camera* Graphic::MainCamera()
 {
 	return mainCamera;
+}
+
+void Graphic::RenderDeferred(std::vector<Object*> objects)
+{
+	// G-Buffer Pass
+	glBindFramebuffer(GL_FRAMEBUFFER, gBufferFBO);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	for (auto const& obj : objects)
+	{
+		auto mesh = obj->mesh;
+		mesh->Draw(obj->transform);
+	}
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+// for Assignment, put two object vector
+void Graphic::RenderForward(std::vector<Object*> lines, std::vector<Object*> objects)
+{
+	// Lighting Pass
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	fsqMesh->shader->Use();
+	for (unsigned int i = 0; i < NUM_ATTACHMENT; ++i)
+	{
+		glActiveTexture(GL_TEXTURE0 + i);
+		glBindTexture(GL_TEXTURE_2D, gBufferTextures[i]);
+	}
+	fsqMesh->Draw(nullptr);
+
+	// Copy Depth Buffer
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, gBufferFBO);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+
+	glBlitFramebuffer(0, 0, (GLint)ScreenSize.x, (GLint)ScreenSize.y, 0, 0, (GLint)ScreenSize.x, (GLint)ScreenSize.y, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	for (auto const& obj : lines)
+	{
+		auto mesh = obj->mesh;
+		mesh->DrawDebug(obj->transform);
+	}
+
+	for (auto const& obj : objects)
+	{
+		auto mesh = obj->mesh;
+		mesh->Draw(obj->transform);
+	}
+}
+
+void Graphic::InitializeDeferredRender()
+{
+	gBufferTextures = new unsigned int[NUM_ATTACHMENT];
+
+	glGenFramebuffers(1, &gBufferFBO);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, gBufferFBO);
+
+	glGenTextures(NUM_ATTACHMENT, gBufferTextures);
+
+	GLenum* attachments = new GLenum[NUM_ATTACHMENT];
+	for (unsigned int i = 0; i < NUM_ATTACHMENT; ++i)
+	{
+		glBindTexture(GL_TEXTURE_2D, gBufferTextures[i]);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, (GLsizei)ScreenSize.x, (GLsizei)ScreenSize.y, 0, GL_RGB, GL_FLOAT, NULL);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, gBufferTextures[i], 0);
+		attachments[i] = GL_COLOR_ATTACHMENT0 + i;
+	}
+
+	glGenRenderbuffers(1, &renderBufferDepth);
+	glBindRenderbuffer(GL_RENDERBUFFER, renderBufferDepth);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, (GLsizei)ScreenSize.x, (GLsizei)ScreenSize.y);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, renderBufferDepth);
+
+	glDrawBuffers(NUM_ATTACHMENT, attachments);
+
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+	{
+		std::cout << "Error::GBuffer" << std::endl;
+		APPLICATION->IsClose = true;
+	}
+
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+
+	auto shader = SHADERS->Get("GBuffer");
+	if (shader == nullptr)
+		SHADERS->Compile("GBuffer", "GBuffer.vert", "GBuffer.frag");
+
+	shader = SHADERS->Get("DeferredFSQ");
+	if (shader == nullptr)
+		SHADERS->Compile("DeferredFSQ", "LightStage.vert", "LightStage.frag");
+
+	shader = SHADERS->Get("DeferredFSQ");
+	fsqMesh = new FSQMesh();
+	fsqMesh->shader = shader;
 }
 
 void Graphic::InitializeUniformBuffer()

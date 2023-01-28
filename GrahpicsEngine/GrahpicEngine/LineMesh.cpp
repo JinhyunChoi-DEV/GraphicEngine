@@ -1,5 +1,7 @@
 #include <glad/glad.h>
 #include "LineMesh.h"
+
+#include "Graphic.h"
 #include "Shader.h"
 #include "ShaderManager.h"
 #include "Transform.h"
@@ -21,9 +23,20 @@ LineMesh::~LineMesh()
 
 void LineMesh::Draw(Transform* transform)
 {
-	shader->Use();
-	shader->Set("model", transform->GetTransform());
-	shader->Set("color", Color);
+	if (UseDeferredRendering)
+	{
+		auto currentShader = SHADERS->Get("GBuffer");
+		currentShader->Use();
+		currentShader->Set("model", transform->GetTransform());
+		currentShader->Set("affectedLighting", false);
+		material->Update(currentShader);
+	}
+	else
+	{
+		shader->Use();
+		shader->Set("model", transform->GetTransform());
+		shader->Set("color", Color);
+	}
 
 	glBindVertexArray(VAO);
 	glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(vertex.size()));

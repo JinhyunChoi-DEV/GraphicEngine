@@ -7,7 +7,7 @@
 #include "ObjectManager.h"
 #include "Scene.h"
 #include "ShaderManager.h"
-#include <typeinfo>
+#include "TextureLoader.h"
 
 int main(void)
 {
@@ -19,10 +19,12 @@ int main(void)
 	ObjectManage* objManager = new ObjectManage();
 	ShaderManager* shaderM = new ShaderManager();
 	Scene* scene = new Scene();
+	TextureLoader* textureLoader = new TextureLoader();
 
 	shaderM->Compile("Default", "Solid.vert", "Solid.frag");
 	shaderM->Compile("Line", "Line.vert", "Line.frag");
 	shaderM->Compile("Phong", "Phong Shading.vert", "Phong Shading.frag");
+
 
 	// Init
 	app->Initialize();
@@ -31,8 +33,7 @@ int main(void)
 	scene->Initialize();
 
 	// Update
-	bool isQuit = false;
-	while (!app->IsClose() && !isQuit)
+	while (!app->IsClose)
 	{
 		input->Update();
 
@@ -40,9 +41,6 @@ int main(void)
 		objManager->Update();
 		scene->Update();
 		graphic->Update();
-
-		if (input->KeyTriggered(GLFW_KEY_ESCAPE))
-			isQuit = true;
 	}
 
 	// Close

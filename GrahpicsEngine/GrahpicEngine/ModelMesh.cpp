@@ -2,13 +2,12 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "ModelMesh.h"
-
+#include "Shader.h"
 #include "Camera.h"
 #include "Graphic.h"
 #include "ShaderManager.h"
 #include "Transform.h"
 
-//TODO: think about Name variable
 ModelMesh::ModelMesh(std::vector<glm::vec3> vertex_, std::vector<glm::vec3> normal_,
 	std::vector<glm::vec2> uv_, std::vector<unsigned int> indices_)
 {
@@ -69,9 +68,18 @@ void ModelMesh::DrawDebug(Transform* transform)
 
 void ModelMesh::DrawModel(Transform* transform)
 {
-	shader->Use();
-	shader->Set("model", transform->GetTransform());
-	shader->Set("cameraPosition", GRAPHIC->MainCamera()->Position);
+	if (UseDeferredRendering)
+	{
+		auto currentShader = SHADERS->Get("GBuffer");
+		currentShader->Use();
+		currentShader->Set("model", transform->GetTransform());
+		currentShader->Set("affectedLighting", true);
+		material->Update(currentShader);
+	}
+	else
+	{
+		shader->Set("cameraPosition", GRAPHIC->MainCamera()->Position);
+	}
 
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_INT, nullptr);
