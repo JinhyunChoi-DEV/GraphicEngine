@@ -11,18 +11,18 @@ struct FixerData
 
 inline glm::vec3 GetMin(glm::vec3 v1, glm::vec3 v2)
 {
-	float x = std::min(v1.x, v2.x);
-	float y = std::min(v1.y, v2.y);
-	float z = std::min(v1.z, v2.z);
-	return { x, y, z };
+	if (glm::length(v1) > glm::length(v2))
+		return v2;
+
+	return v1;
 }
 
 inline glm::vec3 GetMax(glm::vec3 v1, glm::vec3 v2)
 {
-	float x = std::max(v1.x, v2.x);
-	float y = std::max(v1.y, v2.y);
-	float z = std::max(v1.z, v2.z);
-	return { x, y, z };
+	if (glm::length(v1) > glm::length(v2))
+		return v1;
+
+	return v2;
 }
 
 inline std::vector<glm::vec3> SetToUnitVertex(FixerData data, std::vector<glm::vec3> vertex)

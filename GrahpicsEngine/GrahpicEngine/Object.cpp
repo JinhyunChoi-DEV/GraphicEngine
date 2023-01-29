@@ -24,6 +24,24 @@ void Object::Update()
 	if (!IsActive)
 		return;
 
+	if (transform->Rotation.x > 360)
+		transform->Rotation.x -= 360;
+
+	if (transform->Rotation.y > 360)
+		transform->Rotation.y -= 360;
+
+	if (transform->Rotation.z > 360)
+		transform->Rotation.z -= 360;
+
+	if (transform->Rotation.x < 0)
+		transform->Rotation.x += 360;
+
+	if (transform->Rotation.y < 0)
+		transform->Rotation.y += 360;
+
+	if (transform->Rotation.z < 0)
+		transform->Rotation.z += 360;
+
 	for (auto const& component : components)
 		component->Update();
 }

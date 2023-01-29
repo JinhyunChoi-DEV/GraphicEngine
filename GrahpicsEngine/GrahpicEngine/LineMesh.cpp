@@ -9,7 +9,6 @@
 LineMesh::LineMesh(std::vector<glm::vec3> vertex_)
 {
 	vertex = vertex_;
-	Color = glm::vec3(1, 1, 1);
 	shader = SHADERS->Get("Line");
 
 	CreateBuffer();
@@ -17,8 +16,7 @@ LineMesh::LineMesh(std::vector<glm::vec3> vertex_)
 
 LineMesh::~LineMesh()
 {
-	glDeleteVertexArrays(1, &VAO);
-	glDeleteBuffers(1, &VBO);
+	ClearBuffer();
 }
 
 void LineMesh::Draw(Transform* transform)
@@ -35,7 +33,7 @@ void LineMesh::Draw(Transform* transform)
 	{
 		shader->Use();
 		shader->Set("model", transform->GetTransform());
-		shader->Set("color", Color);
+		shader->Set("color", material->AmbientColor);
 	}
 
 	glBindVertexArray(VAO);
@@ -57,4 +55,10 @@ void LineMesh::CreateBuffer()
 	glEnableVertexAttribArray(0);
 
 	glBindVertexArray(0);
+}
+
+void LineMesh::ClearBuffer()
+{
+	glDeleteVertexArrays(1, &VAO);
+	glDeleteBuffers(1, &VBO);
 }

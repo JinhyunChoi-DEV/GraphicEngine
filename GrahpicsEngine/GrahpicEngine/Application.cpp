@@ -33,7 +33,7 @@ Application::Application()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	mainWindow = glfwCreateWindow(1200, 800, "JinhyunChoi-GraphicEngine", NULL, NULL);
+	mainWindow = glfwCreateWindow(1600, 900, "JinhyunChoi-GraphicEngine", NULL, NULL);
 	if (mainWindow == nullptr)
 	{
 		glfwTerminate();
@@ -56,7 +56,7 @@ Application::Application()
 
 void Application::Initialize()
 {
-	GRAPHIC->ScreenSize = glm::vec2(1200, 800);
+	GRAPHIC->ScreenSize = glm::vec2(1600, 900);
 }
 
 void Application::Update()

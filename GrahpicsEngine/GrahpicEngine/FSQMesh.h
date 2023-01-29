@@ -10,6 +10,7 @@ public:
 	FSQMesh();
 	~FSQMesh();
 
+	void CopyData(const Mesh& copy) override {}
 	void Draw(Transform* transform) override;
 	void DrawDebug(Transform* transform) override;
 

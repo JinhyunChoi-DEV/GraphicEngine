@@ -10,17 +10,33 @@ StaticMesh::StaticMesh(std::vector<glm::vec3> vertex_, std::vector<unsigned int>
 {
 	vertex = vertex_;
 	indices = indices_;
-	Color = glm::vec3(1, 1, 1);
 	shader = SHADERS->Get("Default");
+
+	CreateBuffer();
+}
+
+StaticMesh::StaticMesh(const StaticMesh& copy)
+{
+	vertex = copy.vertex;
+	indices = copy.indices;
 
 	CreateBuffer();
 }
 
 StaticMesh::~StaticMesh()
 {
-	glDeleteVertexArrays(1, &VAO);
-	glDeleteBuffers(1, &VBO);
-	glDeleteBuffers(1, &EBO);
+	ClearBuffer();
+}
+
+void StaticMesh::CopyData(const Mesh& copy)
+{
+	const StaticMesh& mesh = dynamic_cast<const StaticMesh&>(copy);
+	ClearBuffer();
+
+	vertex = mesh.vertex;
+	indices = mesh.indices;
+
+	CreateBuffer();
 }
 
 void StaticMesh::Draw(Transform* transform)
@@ -37,12 +53,19 @@ void StaticMesh::Draw(Transform* transform)
 	{
 		shader->Use();
 		shader->Set("model", transform->GetTransform());
-		shader->Set("color", Color);
+		shader->Set("color", material->AmbientColor);
 	}
 
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_INT, nullptr);
 	glBindVertexArray(0);
+}
+
+void StaticMesh::ClearBuffer()
+{
+	glDeleteVertexArrays(1, &VAO);
+	glDeleteBuffers(1, &VBO);
+	glDeleteBuffers(1, &EBO);
 }
 
 void StaticMesh::CreateBuffer()

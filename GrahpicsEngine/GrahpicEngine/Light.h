@@ -29,7 +29,6 @@ public:
 	float InnerAngle;
 	float OuterAngle;
 	float Fallout;
-	bool IsActive;
 
 private:
 	Object* root;

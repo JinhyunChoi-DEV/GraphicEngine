@@ -5,6 +5,7 @@
 #include "Shader.h"
 #include "Camera.h"
 #include "Graphic.h"
+#include "Object.h"
 #include "ShaderManager.h"
 #include "Transform.h"
 
@@ -28,7 +29,7 @@ ModelMesh::ModelMesh(std::vector<glm::vec3> vertex_, std::vector<glm::vec3> norm
 	CreateLineBuffers();
 }
 
-ModelMesh::ModelMesh(ModelMesh& copy)
+ModelMesh::ModelMesh(const ModelMesh& copy)
 {
 	vertex = copy.vertex;
 	vertexNormal = copy.vertexNormal;
@@ -37,8 +38,8 @@ ModelMesh::ModelMesh(ModelMesh& copy)
 	indices = copy.indices;
 	vertexNormalLine = copy.vertexNormalLine;
 	faceNormalLine = copy.faceNormalLine;
-	DrawFaceNormal = false;
-	DrawVertexNormal = false;
+	DrawVertexNormal = copy.DrawVertexNormal;
+	DrawFaceNormal = copy.DrawFaceNormal;
 
 	shader = copy.shader;
 
@@ -48,11 +49,26 @@ ModelMesh::ModelMesh(ModelMesh& copy)
 
 ModelMesh::~ModelMesh()
 {
-	glDeleteVertexArrays(1, &VAO);
-	glDeleteBuffers(3, &VBO[0]);
-	glDeleteBuffers(1, &EBO);
-	glDeleteVertexArrays(2, lineVAO);
-	glDeleteBuffers(2, lineVBO);
+	ClearBuffer();
+}
+
+void ModelMesh::CopyData(const Mesh& copy)
+{
+	const ModelMesh& mesh = dynamic_cast<const ModelMesh&>(copy);
+	ClearBuffer();
+
+	vertex = mesh.vertex;
+	vertexNormal = mesh.vertexNormal;
+	faceNormal = mesh.faceNormal;
+	textureCoordinate = mesh.textureCoordinate;
+	indices = mesh.indices;
+	vertexNormalLine = mesh.vertexNormalLine;
+	faceNormalLine = mesh.faceNormalLine;
+	DrawVertexNormal = mesh.DrawVertexNormal;
+	DrawFaceNormal = mesh.DrawFaceNormal;
+
+	CreateModelBuffers();
+	CreateLineBuffers();
 }
 
 void ModelMesh::Draw(Transform* transform)
@@ -78,7 +94,7 @@ void ModelMesh::DrawModel(Transform* transform)
 	}
 	else
 	{
-		shader->Set("cameraPosition", GRAPHIC->MainCamera()->Position);
+		shader->Set("cameraPosition", GRAPHIC->MainCamera()->gameObject->transform->Position);
 	}
 
 	glBindVertexArray(VAO);
@@ -207,6 +223,15 @@ void ModelMesh::CreateNormalLines()
 			faceNormalLine.insert(faceNormalLine.end(), { v1,v2 });
 		}
 	}
+}
+
+void ModelMesh::ClearBuffer()
+{
+	glDeleteVertexArrays(1, &VAO);
+	glDeleteBuffers(3, &VBO[0]);
+	glDeleteBuffers(1, &EBO);
+	glDeleteVertexArrays(2, lineVAO);
+	glDeleteBuffers(2, lineVBO);
 }
 
 void ModelMesh::CreateLineBuffers()

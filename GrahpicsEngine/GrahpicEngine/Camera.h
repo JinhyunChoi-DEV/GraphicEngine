@@ -5,6 +5,11 @@
 class Object;
 class Transform;
 
+enum class CameraMoveAxis
+{
+	Front, Back, Right, Left
+};
+
 class Camera : public IComponent
 {
 public:
@@ -15,15 +20,17 @@ public:
 	void Update() override;
 	void Delete() override;
 
+	void Move(float speed, CameraMoveAxis axis);
 	const glm::mat4 View();
 	const glm::mat4 Projection();
-
+	Object* gameObject;
 	glm::vec3 Position;
+
 	bool IsMain;
 	bool UseConstantRatio;
 	float Near, Far, Fov;
 private:
-	Transform* transform;
 	glm::vec3 back, up, right;
+	glm::vec3 baseBack, baseRight;
 	float ratio, width, height;
 };

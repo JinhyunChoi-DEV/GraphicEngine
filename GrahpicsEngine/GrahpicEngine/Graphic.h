@@ -25,15 +25,20 @@ public:
 	void Update();
 	void Close();
 
-	void AddLight(Light* light);
+	void AddLight(Object* root, Light* light);
 	void DeleteLight(Light* light);
 
 	void AddCamera(Camera*);
 	void DeleteCamera(Camera*);
-	const Camera* MainCamera();
+	void DrawDeferredView();
+	Camera* MainCamera();
 
 	LightGlobalData LightData;
 	glm::vec2 ScreenSize;
+
+	bool ActiveCopyDepthBuffer;
+	bool ActiveDrawFSQ;
+
 private:
 	void RenderDeferred(std::vector<Object*>);
 	void RenderForward(std::vector<Object*>, std::vector<Object*>);
@@ -46,7 +51,7 @@ private:
 	Camera* mainCamera;
 	Mesh* fsqMesh;
 	std::vector<Camera*> cameras;
-	std::vector<Light*> lights;
+	std::vector<std::pair<Object*, Light*>> lights;
 	unsigned int uboTransform;
 	unsigned int uboLighting;
 	unsigned int gBufferFBO;

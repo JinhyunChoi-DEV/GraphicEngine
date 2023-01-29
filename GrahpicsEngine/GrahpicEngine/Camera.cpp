@@ -1,15 +1,15 @@
-#include "Camera.h"
-
 #include <glm/ext/matrix_clip_space.hpp>
 #include <glm/ext/matrix_transform.hpp>
+#include <glm/gtx/quaternion.hpp>
 
+#include "Camera.h"
 #include "Graphic.h"
 #include "Object.h"
 #include "Transform.h"
 
 Camera::Camera(Object* obj)
 {
-	transform = obj->transform;
+	gameObject = obj;
 
 	Near = 0.1f;
 	Far = 100.f;
@@ -20,11 +20,14 @@ Camera::Camera(Object* obj)
 
 	IsMain = false;
 	UseConstantRatio = false;
-	Position = transform->Position;
+	Position = gameObject->transform->Position;
 
 	back = glm::vec3(0, 0, 1);
 	right = glm::cross(-back, glm::vec3{ 0,1,0 });
 	up = glm::cross(back, right);
+
+	baseBack = back;
+	baseRight = right;
 }
 
 Camera::~Camera()
@@ -41,9 +44,6 @@ void Camera::Initialize()
 
 void Camera::Update()
 {
-	// Update Camera Position
-	Position = transform->Position;
-
 	// Update Viewport Size
 	width = GRAPHIC->ScreenSize.x;
 	height = GRAPHIC->ScreenSize.y;
@@ -53,10 +53,37 @@ void Camera::Update()
 		ratio = 1.0f;
 	else
 		ratio = width / height;
+
+	//Update Camera Position and Rotation
+	auto rotation = gameObject->transform->Rotation;
+	float xAngle = glm::radians(rotation.x);
+	float yAngle = glm::radians(rotation.y);
+	float zAngle = glm::radians(rotation.z);
+	glm::vec3 rotationRadians = glm::vec3(xAngle, yAngle, zAngle);
+	glm::quat rotateQuat = glm::quat(rotationRadians);
+	glm::mat4 rotateMatrix = glm::toMat4(rotateQuat);
+
+	back = rotateMatrix * glm::vec4(baseBack, 0);
+	right = rotateMatrix * glm::vec4(baseRight, 0);
+	up = glm::cross(back, right);
+
+	gameObject->transform->Position = Position;
 }
 
 void Camera::Delete()
 {
+}
+
+void Camera::Move(float speed, CameraMoveAxis axis)
+{
+	if (axis == CameraMoveAxis::Front)
+		Position = Position - (back * speed);
+	if (axis == CameraMoveAxis::Back)
+		Position = Position + (back * speed);
+	if (axis == CameraMoveAxis::Right)
+		Position = Position + (right * speed);
+	if (axis == CameraMoveAxis::Left)
+		Position = Position - (right * speed);
 }
 
 const glm::mat4 Camera::Projection()

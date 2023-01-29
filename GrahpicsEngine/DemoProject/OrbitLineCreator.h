@@ -4,7 +4,7 @@
 #include "ModelTransformFixer.h"
 #include "LineMesh.h"
 
-inline Mesh* CreateOrbitLine(float radius, int sector)
+inline LineMesh* CreateOrbitLine(float radius, int sector)
 {
 	float minValue = std::numeric_limits<float>::max();
 	float maxValue = std::numeric_limits<float>::min();
@@ -39,6 +39,5 @@ inline Mesh* CreateOrbitLine(float radius, int sector)
 	}
 
 	SetToUnitVertex(data, positions);
-	auto result = new LineMesh(positions);
 	return new LineMesh(positions);
 }

@@ -7,6 +7,7 @@
 #include "ObjectManager.h"
 #include "Camera.h"
 #include "FSQMesh.h"
+#include "imgui.h"
 #include "Object.h"
 #include "ModelMesh.h"
 #include "ShaderManager.h"
@@ -25,11 +26,13 @@ void Graphic::Initialize()
 	InitializeUniformBuffer();
 	InitializeDeferredRender();
 
-	LightData.attenuationConstant = { 1.0f, 0.22f, 0.2f };
+	LightData.attenuationConstant = { 0.01f, 1.44f, 0.02f };
 	LightData.globalAmbient = { 0,0,0 };
-	LightData.fog = { 0,0,0 };
+	LightData.fog = { 1,1,1 };
 	LightData.minFog = 0.1f;
-	LightData.maxFog = 25.0f;
+	LightData.maxFog = 100.0f;
+	ActiveDrawFSQ = true;
+	ActiveCopyDepthBuffer = true;
 
 	glEnable(GL_DEPTH_TEST);
 }
@@ -45,7 +48,10 @@ void Graphic::Update()
 		obj->transform->Position = { 0, 1, 10 };
 	}
 
-	glClearColor(LightData.fog.r, LightData.fog.g, LightData.fog.b, 1.0f);
+	if (ScreenSize.x <= 0 || ScreenSize.y <= 0)
+		return;
+
+	glClearColor(0, 0, 0, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glViewport(0, 0, static_cast<int>(ScreenSize.x), static_cast<int>(ScreenSize.y));
 
@@ -86,16 +92,16 @@ void Graphic::Close()
 	cameras.clear();
 }
 
-void Graphic::AddLight(Light* light)
+void Graphic::AddLight(Object* root, Light* light)
 {
-	lights.push_back(light);
+	lights.push_back(std::make_pair(root, light));
 }
 
 void Graphic::DeleteLight(Light* light)
 {
 	for (auto it = lights.begin(); it != lights.end();)
 	{
-		if (*it == light)
+		if (it->second == light)
 		{
 			lights.erase(it);
 			break;
@@ -137,7 +143,24 @@ void Graphic::DeleteCamera(Camera* target)
 	}
 }
 
-const Camera* Graphic::MainCamera()
+void Graphic::DrawDeferredView()
+{
+	ImVec2 size = { 150, 150 };
+	unsigned int split = NUM_ATTACHMENT / 2;
+	unsigned int count = 0;
+
+	for (unsigned int i = 0; i < NUM_ATTACHMENT; ++i)
+	{
+		if (i != 0 && count == split)
+			ImGui::NewLine();
+
+		ImGui::Image((ImTextureID)gBufferTextures[i], size, ImVec2(0, 1), ImVec2(1, 0));
+		ImGui::SameLine();
+		count++;
+	}
+}
+
+Camera* Graphic::MainCamera()
 {
 	return mainCamera;
 }
@@ -161,20 +184,27 @@ void Graphic::RenderForward(std::vector<Object*> lines, std::vector<Object*> obj
 {
 	// Lighting Pass
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	fsqMesh->shader->Use();
-	for (unsigned int i = 0; i < NUM_ATTACHMENT; ++i)
+
+	if (ActiveDrawFSQ)
 	{
-		glActiveTexture(GL_TEXTURE0 + i);
-		glBindTexture(GL_TEXTURE_2D, gBufferTextures[i]);
+		fsqMesh->shader->Use();
+		for (unsigned int i = 0; i < NUM_ATTACHMENT; ++i)
+		{
+			glActiveTexture(GL_TEXTURE0 + i);
+			glBindTexture(GL_TEXTURE_2D, gBufferTextures[i]);
+		}
+		fsqMesh->Draw(nullptr);
 	}
-	fsqMesh->Draw(nullptr);
 
-	// Copy Depth Buffer
-	glBindFramebuffer(GL_READ_FRAMEBUFFER, gBufferFBO);
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+	if (ActiveCopyDepthBuffer)
+	{
+		// Copy Depth Buffer
+		glBindFramebuffer(GL_READ_FRAMEBUFFER, gBufferFBO);
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 
-	glBlitFramebuffer(0, 0, (GLint)ScreenSize.x, (GLint)ScreenSize.y, 0, 0, (GLint)ScreenSize.x, (GLint)ScreenSize.y, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glBlitFramebuffer(0, 0, (GLint)ScreenSize.x, (GLint)ScreenSize.y, 0, 0, (GLint)ScreenSize.x, (GLint)ScreenSize.y, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	}
 
 	for (auto const& obj : lines)
 	{
@@ -271,9 +301,9 @@ void Graphic::UpdateTransformUniformBuffer(Camera* cam) const
 void Graphic::UpdateLightingUniformBuffer()
 {
 	int activeCount = 0;
-	for (auto const& light : lights)
+	for (auto const& lightP : lights)
 	{
-		if (light->IsActive)
+		if (lightP.first->IsActive)
 			activeCount++;
 	}
 
@@ -295,7 +325,7 @@ void Graphic::UpdateLightingUniformBuffer()
 
 	for (int i = 0; i < activeCount; ++i)
 	{
-		auto light = lights[i];
+		auto light = lights[i].second;
 
 		glBufferSubData(GL_UNIFORM_BUFFER, offset, sizeof(unsigned int), &light->Type);
 		offset += 16;

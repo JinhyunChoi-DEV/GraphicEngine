@@ -45,17 +45,17 @@ void main()
 	gBufferDepth = vec3(distance);
 
 	if(useAmbientTexture)
-		gBufferAmbient = texture(ambientTexture, uv.st).rgb;
+		gBufferAmbient = texture(ambientTexture, uv.st).rgb * ambientColor;
 	else
 		gBufferAmbient = ambientColor;
 
 	if(useDiffuseTexture)
-		gBufferDiffuse = texture(diffuseTexture, uv.st).rgb;
+		gBufferDiffuse = texture(diffuseTexture, uv.st).rgb * diffuseColor;
 	else
 		gBufferDiffuse = diffuseColor;
 
 	if(useSpecularTexture)
-		gBufferSpecular = texture(specularTexture, uv.st).rgb;
+		gBufferSpecular = texture(specularTexture, uv.st).rgb * specularColor;
 	else
 		gBufferSpecular = specularColor;
 }

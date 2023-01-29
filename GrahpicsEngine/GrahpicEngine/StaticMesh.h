@@ -8,13 +8,15 @@ class StaticMesh : public Mesh
 {
 public:
 	StaticMesh(std::vector<glm::vec3> vertex_, std::vector<unsigned int> indices_);
+	StaticMesh(const StaticMesh& copy);
 	~StaticMesh();
 
+	void CopyData(const Mesh& copy) override;
 	void Draw(Transform* transform) override;
 	void DrawDebug(Transform* transform) override {}
 
-	glm::vec3 Color;
 private:
+	void ClearBuffer();
 	void CreateBuffer();
 
 	std::vector<unsigned int> indices;

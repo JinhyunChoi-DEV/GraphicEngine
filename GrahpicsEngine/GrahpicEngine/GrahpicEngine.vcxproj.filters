@@ -34,6 +34,9 @@
     <Filter Include="Material">
       <UniqueIdentifier>{56673848-ca0a-4957-88c1-c0371889d5e6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GUI">
+      <UniqueIdentifier>{c1220603-32b3-4efe-92c8-12c6b6070703}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModelLoader.cpp">
@@ -92,6 +95,27 @@
     </ClCompile>
     <ClCompile Include="TextureLoader.cpp">
       <Filter>Material</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libs\imgui\imgui.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libs\imgui\imgui_demo.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libs\imgui\imgui_draw.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libs\imgui\imgui_impl_glfw.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libs\imgui\imgui_impl_opengl3.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libs\imgui\imgui_tables.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libs\imgui\imgui_widgets.cpp">
+      <Filter>GUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -157,6 +181,33 @@
     </ClInclude>
     <ClInclude Include="TextureLoader.h">
       <Filter>Material</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libs\imgui\imconfig.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libs\imgui\imgui.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libs\imgui\imgui_impl_glfw.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libs\imgui\imgui_impl_opengl3.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libs\imgui\imgui_impl_opengl3_loader.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libs\imgui\imgui_internal.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libs\imgui\imstb_rectpack.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libs\imgui\imstb_textedit.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libs\imgui\imstb_truetype.h">
+      <Filter>GUI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

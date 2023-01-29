@@ -4,7 +4,7 @@
 #include "ModelTransformFixer.h"
 #include "StaticMesh.h"
 
-inline Mesh* CreateSphere(float radius, int stack, int sector)
+inline StaticMesh* CreateSphere(float radius, int stack, int sector)
 {
 	constexpr auto pi = glm::pi<float>();
 	float sectorStep = 2 * pi / (float)sector;

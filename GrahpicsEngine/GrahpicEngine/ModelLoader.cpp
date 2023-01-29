@@ -40,6 +40,7 @@ void ModelLoader::Load(std::string name, std::string fileName)
 
 	vertex = SetToUnitVertex(data, vertex);
 	ModelMesh* mesh = new ModelMesh(vertex, vertexNormal, textureCoordinate, indices);
+	mesh->Name = name;
 	models.insert(std::make_pair(name, mesh));
 }
 
@@ -86,7 +87,7 @@ void ModelLoader::CreateMesh(aiMesh* mesh, const aiScene* scene)
 		vector.z = mesh->mVertices[i].z;
 
 		data.min = GetMin(data.min, vector);
-		data.min = GetMax(data.min, vector);
+		data.max = GetMax(data.max, vector);
 		data.sumAllVertex += vector;
 
 		vertex.push_back(vector);

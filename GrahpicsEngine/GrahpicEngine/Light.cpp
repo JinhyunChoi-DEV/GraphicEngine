@@ -16,7 +16,6 @@ Light::Light(Object* root_)
 	OuterAngle = 0.0f;
 	Fallout = 1.0f;
 	transform = root_->transform;
-	IsActive = root_->IsActive;
 }
 
 Light::~Light()
@@ -26,12 +25,11 @@ Light::~Light()
 
 void Light::Initialize()
 {
-	GRAPHIC->AddLight(this);
+	GRAPHIC->AddLight(root, this);
 }
 
 void Light::Update()
 {
-	IsActive = root->IsActive;
 }
 
 void Light::Delete()

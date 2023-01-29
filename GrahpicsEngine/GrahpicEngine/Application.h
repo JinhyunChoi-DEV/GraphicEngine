@@ -11,7 +11,7 @@ public:
 	void Update();
 	void Close();
 
-	const GLFWwindow* GetWindow() { return mainWindow; }
+	GLFWwindow* GetWindow() { return mainWindow; }
 
 	bool IsClose;
 private:

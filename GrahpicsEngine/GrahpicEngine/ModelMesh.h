@@ -10,9 +10,10 @@ class ModelMesh : public Mesh
 public:
 	ModelMesh(std::vector<glm::vec3> vertex_, std::vector<glm::vec3> normal_,
 		std::vector<glm::vec2> uv_, std::vector<unsigned int> indices_);
-	ModelMesh(ModelMesh& copy);
+	ModelMesh(const ModelMesh& copy);
 	~ModelMesh();
 
+	void CopyData(const Mesh& copy) override;
 	void Draw(Transform* transform) override;
 	void DrawDebug(Transform* transform) override;
 
@@ -27,6 +28,7 @@ private:
 	void CreateFaceNormal();
 	void CreateSphericalUV();
 	void CreateNormalLines();
+	void ClearBuffer();
 
 	std::vector<glm::vec3> vertexNormal;
 	std::vector<glm::vec3> faceNormal;

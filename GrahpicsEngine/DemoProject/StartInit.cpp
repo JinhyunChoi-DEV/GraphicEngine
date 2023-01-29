@@ -9,6 +9,9 @@
 #include "ShaderManager.h"
 #include "TextureLoader.h"
 
+#include <glm/glm.hpp>
+#include <glm/ext/matrix_transform.hpp>
+
 int main(void)
 {
 	// Constructor
@@ -39,15 +42,15 @@ int main(void)
 
 		app->Update();
 		objManager->Update();
-		scene->Update();
 		graphic->Update();
+		scene->Update();
 	}
 
 	// Close
-	app->Close();
+	scene->Close();
 	graphic->Close();
 	objManager->Close();
-	scene->Close();
+	app->Close();
 
 	// clean up memory
 	delete app;

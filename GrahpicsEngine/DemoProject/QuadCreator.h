@@ -1,7 +1,7 @@
 #pragma once
 #include "ModelMesh.h"
 
-inline Mesh* CreateQuad()
+inline ModelMesh* CreateQuad()
 {
 	std::vector<glm::vec3> vertex =
 	{

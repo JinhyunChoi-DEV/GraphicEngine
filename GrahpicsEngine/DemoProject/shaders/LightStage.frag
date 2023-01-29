@@ -69,7 +69,7 @@ void main()
 	vec3 lightsResult = vec3(0);
 	for(int i =0; i<lights.lightCount; ++i)
 	{
-		vec3 ambient = lights.light[i].ambient * fragAmbient;
+		vec3 ambient = getAmbient(lights.light[i]) * fragAmbient;
 		vec3 diffuse = getDiffuse(fragPosition, fragNormal, lights.light[i]) * fragDiffuse;
 		vec3 specular = getSpecular(fragPosition, fragNormal, lights.light[i]) * fragSpecular;
 		vec3 colorWithLight = getColorWithLight(fragPosition, ambient, diffuse, specular, lights.light[i]);

@@ -3,6 +3,7 @@
 #include "FSQMesh.h"
 #include "Camera.h"
 #include "Graphic.h"
+#include "Object.h"
 #include "Shader.h"
 #include "ShaderManager.h"
 
@@ -58,7 +59,7 @@ void FSQMesh::Draw(Transform* transform)
 
 	shader->Use();
 	shader->Set("model", trs.GetTransform());
-	shader->Set("cameraPosition", GRAPHIC->MainCamera()->Position);
+	shader->Set("cameraPosition", GRAPHIC->MainCamera()->gameObject->transform->Position);
 
 	glBindVertexArray(VAO);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, (int)vertex.size());
