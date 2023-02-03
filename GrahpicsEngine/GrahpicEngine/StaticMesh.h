@@ -33,7 +33,7 @@ private:
 	void CreateBuffer();
 
 	std::vector<unsigned int> indices;
-	unsigned int VAO;
-	unsigned int VBO;
-	unsigned int EBO;
+	unsigned int VAO = 0;
+	unsigned int VBO = 0;
+	unsigned int EBO = 0;
 };

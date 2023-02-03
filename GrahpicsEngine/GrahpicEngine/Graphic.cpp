@@ -32,20 +32,21 @@ Graphic::Graphic()
 {
 	if (GRAPHIC == nullptr)
 		GRAPHIC = this;
-}
-
-void Graphic::Initialize()
-{
-	InitializeUniformBuffer();
-	InitializeDeferredRender();
 
 	LightData.attenuationConstant = { 0.01f, 1.44f, 0.02f };
 	LightData.globalAmbient = { 0,0,0 };
 	LightData.fog = { 1,1,1 };
 	LightData.minFog = 0.1f;
 	LightData.maxFog = 100.0f;
+
 	ActiveDrawFSQ = true;
 	ActiveCopyDepthBuffer = true;
+}
+
+void Graphic::Initialize()
+{
+	InitializeUniformBuffer();
+	InitializeDeferredRender();
 
 	glEnable(GL_DEPTH_TEST);
 }

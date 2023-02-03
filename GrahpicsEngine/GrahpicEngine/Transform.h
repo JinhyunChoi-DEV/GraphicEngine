@@ -20,9 +20,9 @@ class Transform
 public:
 	Transform();
 
-	glm::vec3 Position;
-	glm::vec3 Scale;
-	glm::vec3 Rotation;
+	glm::vec3 Position = glm::vec3(0);
+	glm::vec3 Scale = glm::vec3(1);
+	glm::vec3 Rotation = glm::vec3(0);
 
 	const glm::mat4 GetTransform();
 private:

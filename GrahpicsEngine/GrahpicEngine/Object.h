@@ -37,9 +37,9 @@ public:
 	template <typename COMPONENT>
 	COMPONENT* GetComponent();
 
-	Transform* transform;
-	Mesh* mesh;
-	bool IsActive;
+	Transform* transform = nullptr;
+	Mesh* mesh = nullptr;
+	bool IsActive = false;
 	std::string Name;
 private:
 

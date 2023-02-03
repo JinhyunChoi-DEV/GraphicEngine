@@ -31,7 +31,7 @@ public:
 	virtual void DrawDebug(Transform* transform) = 0;
 
 	bool UseDeferredRendering;
-	Shader* shader;
+	Shader* shader = nullptr;
 	Material* material;
 	std::string Name;
 

@@ -270,8 +270,8 @@ void Assignment1_Stage::UpdateCamera(float dt)
 void Assignment1_Stage::UpdateLights()
 {
 	constexpr float pi = glm::pi<float>();
-	float step = 2.0f * pi / activeLightCount;
-	for (int i = 0; i < lights.size(); ++i)
+	float step = 2.0f * pi / (float)activeLightCount;
+	for (int i = 0; i < (int)lights.size(); ++i)
 	{
 		if (i < activeLightCount)
 		{

@@ -23,8 +23,8 @@ inline StaticMesh* CreateSphere(float radius, int stack, int sector)
 	float sectorStep = 2 * pi / (float)sector;
 	float stackStep = pi / (float)stack;
 	float sectorAngle, stackAngle = 0.0f;
-	float minValue = std::numeric_limits<float>::max();
-	float maxValue = std::numeric_limits<float>::min();
+	constexpr float minValue = std::numeric_limits<float>::max();
+	constexpr float maxValue = std::numeric_limits<float>::min();
 
 	std::vector<glm::vec3> positions;
 	std::vector<unsigned int> indices;

@@ -17,9 +17,9 @@ End Header --------------------------------------------------------*/
 
 struct FixerData
 {
-	glm::vec3 min;
-	glm::vec3 max;
-	glm::vec3 sumAllVertex;
+	glm::vec3 min = glm::vec3(0);
+	glm::vec3 max = glm::vec3(0);
+	glm::vec3 sumAllVertex = glm::vec3(0);
 };
 
 inline glm::vec3 GetMin(glm::vec3 v1, glm::vec3 v2)

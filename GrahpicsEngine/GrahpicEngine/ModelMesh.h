@@ -50,9 +50,9 @@ private:
 	std::vector<glm::vec3> vertexNormalLine;
 	std::vector<glm::vec3> faceNormalLine;
 
-	unsigned int VAO;
-	unsigned int VBO[3];
-	unsigned int EBO;
-	unsigned int lineVAO[2];
-	unsigned int lineVBO[2];
+	unsigned int VAO = 0;
+	unsigned int VBO[3] = { 0,0,0 };
+	unsigned int EBO = 0;
+	unsigned int lineVAO[2] = { 0,0 };
+	unsigned int lineVBO[2] = { 0,0 };
 };

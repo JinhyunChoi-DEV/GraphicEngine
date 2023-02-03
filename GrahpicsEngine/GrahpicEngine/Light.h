@@ -33,15 +33,15 @@ public:
 	void Update() override;
 	void Delete() override;
 
-	Transform* transform;
-	LightType Type;
-	glm::vec3 Direction;
-	glm::vec3 Ambient;
-	glm::vec3 Diffuse;
-	glm::vec3 Specular;
-	float InnerAngle;
-	float OuterAngle;
-	float Fallout;
+	Transform* transform = nullptr;
+	LightType Type = LightType::Directional;
+	glm::vec3 Direction = glm::vec3(0);
+	glm::vec3 Ambient = glm::vec3(0);
+	glm::vec3 Diffuse = glm::vec3(0);
+	glm::vec3 Specular = glm::vec3(0);
+	float InnerAngle = 0.0f;
+	float OuterAngle = 0.0f;
+	float Fallout = 0.0f;
 
 private:
 	Object* root;

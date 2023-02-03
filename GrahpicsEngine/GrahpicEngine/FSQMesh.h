@@ -30,6 +30,6 @@ public:
 private:
 	Transform baseTransform;
 	std::vector<glm::vec2> uv;
-	unsigned int VAO;
-	unsigned int VBO[2];
+	unsigned int VAO = 0;
+	unsigned int VBO[2] = { 0,0 };
 };

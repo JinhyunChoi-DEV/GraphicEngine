@@ -28,12 +28,12 @@ public:
 	Texture DiffuseTexture;
 	Texture SpecularTexture;
 
-	glm::vec3 AmbientColor;
-	glm::vec3 DiffuseColor;
-	glm::vec3 SpecularColor;
-	glm::vec3 Intensity;
+	glm::vec3 AmbientColor = glm::vec3(0);
+	glm::vec3 DiffuseColor = glm::vec3(0);
+	glm::vec3 SpecularColor = glm::vec3(0);
+	glm::vec3 Intensity = glm::vec3(0);
 
-	bool UseGpuUV;
+	bool UseGpuUV = true;
 private:
 	Texture baseDefault;
 

@@ -22,11 +22,11 @@ class Object;
 
 struct LightGlobalData
 {
-	glm::vec3 attenuationConstant;
-	glm::vec3 globalAmbient;
-	glm::vec3 fog;
-	float minFog;
-	float maxFog;
+	glm::vec3 attenuationConstant = glm::vec3(0);
+	glm::vec3 globalAmbient = glm::vec3(0);
+	glm::vec3 fog = glm::vec3(0);
+	float minFog = 0.0f;
+	float maxFog = 0.0f;
 };
 
 class Graphic
@@ -47,10 +47,10 @@ public:
 	Camera* MainCamera();
 
 	LightGlobalData LightData;
-	glm::vec2 ScreenSize;
+	glm::vec2 ScreenSize = glm::vec2(0);
 
-	bool ActiveCopyDepthBuffer;
-	bool ActiveDrawFSQ;
+	bool ActiveCopyDepthBuffer = false;
+	bool ActiveDrawFSQ = false;
 
 private:
 	void RenderDeferred(std::vector<Object*>);
@@ -61,15 +61,15 @@ private:
 	void UpdateTransformUniformBuffer(Camera* cam) const;
 	void UpdateLightingUniformBuffer();
 
-	Camera* mainCamera;
-	Mesh* fsqMesh;
+	Camera* mainCamera = nullptr;
+	Mesh* fsqMesh = nullptr;
 	std::vector<Camera*> cameras;
 	std::vector<std::pair<Object*, Light*>> lights;
-	unsigned int uboTransform;
-	unsigned int uboLighting;
-	unsigned int gBufferFBO;
-	unsigned int* gBufferTextures;
-	unsigned int renderBufferDepth;
+	unsigned int uboTransform = 0;
+	unsigned int uboLighting = 0;
+	unsigned int gBufferFBO = 0;
+	unsigned int* gBufferTextures = nullptr;
+	unsigned int renderBufferDepth = 0;
 	const unsigned int NUM_ATTACHMENT = 8;
 };
 

@@ -26,7 +26,7 @@ public:
 
 	GLFWwindow* GetWindow() { return mainWindow; }
 
-	bool IsClose;
+	bool IsClose = false;
 private:
 	GLFWwindow* mainWindow = nullptr;
 };

@@ -43,18 +43,18 @@ private:
 	void SetScenario2();
 	void SetScenario3();
 
-	glm::vec3 lightOriginPosition;
+	glm::vec3 lightOriginPosition = glm::vec3(0);
 	std::vector<std::string> modelNames;
 	std::vector<Object*> lights;
 	std::string selectedModelName;
-	int selectedLightIndex;
-	Object* mainObject;
-	float rotationTime;
-	float lastUpdateTime;
-	int activeLightCount;
-	bool needResetRotationTimer;
-	bool activeTestUV;
-	bool activeRotation;
+	int selectedLightIndex = 0;
+	Object* mainObject = nullptr;
+	float rotationTime = 0.0f;
+	float lastUpdateTime = 0.0f;
+	int activeLightCount = 0;
+	bool needResetRotationTimer = false;
+	bool activeTestUV = false;
+	bool activeRotation = false;
 
 	std::string lightTypeName[3] =
 	{
