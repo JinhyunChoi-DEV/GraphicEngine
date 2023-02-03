@@ -1,3 +1,16 @@
+/* Start Header -------------------------------------------------------
+Copyright (C) <current year in format 2023> DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents without the prior written
+consent of DigiPen Institute of Technology is prohibited.
+File Name: GBuffer.frag
+Purpose: Making of fragment shader for GBuffer data
+Language: C++
+Platform: Windows 11
+Project: CS350_jinhyun.choi_1
+Author: Jinhyun Choi / jinhyun.choi / 0055642
+Creation date: 2/2/2023
+End Header --------------------------------------------------------*/
+
 layout(location=0) out vec3 gBufferPosition;
 layout(location=1) out vec3 gBufferNormal;
 layout(location=2) out vec3 gBufferUV;

@@ -1,9 +1,22 @@
-﻿#include <filesystem>
+﻿/* Start Header -------------------------------------------------------
+Copyright (C) <current year in format 2023> DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents without the prior written
+consent of DigiPen Institute of Technology is prohibited.
+File Name: Assignment1_Stage.cpp
+Purpose: Making of implementing code to setup assignment1 scene
+Language: C++
+Platform: Windows 11
+Project: CS350_jinhyun.choi_1
+Author: Jinhyun Choi / jinhyun.choi / 0055642
+Creation date: 2/2/2023
+End Header --------------------------------------------------------*/
+
+#include <filesystem>
 #include "imgui.h"
 #include <imgui/imgui.h>
 #include <imgui/imgui_impl_glfw.h>
 #include <imgui/imgui_impl_opengl3.h>
-#include "Scene.h"
+#include "Assignment1_Stage.h"
 
 #include "Application.h"
 #include "Camera.h"
@@ -21,7 +34,7 @@
 #include "TextureLoader.h"
 #include "Transform.h"
 
-void Scene::Initialize()
+void Assignment1_Stage::Initialize()
 {
 	InitializeGUI();
 	LoadAllModel();
@@ -41,7 +54,7 @@ void Scene::Initialize()
 	CreateOrbit();
 }
 
-void Scene::Update()
+void Assignment1_Stage::Update()
 {
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
@@ -63,14 +76,14 @@ void Scene::Update()
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
-void Scene::Close()
+void Assignment1_Stage::Close()
 {
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
 }
 
-void Scene::InitializeGUI()
+void Assignment1_Stage::InitializeGUI()
 {
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -80,7 +93,7 @@ void Scene::InitializeGUI()
 	ImGui::StyleColorsDark();
 }
 
-void Scene::LoadAllModel()
+void Assignment1_Stage::LoadAllModel()
 {
 	std::string path = MODELLOAD->rootPath;
 	for (const auto& entry : std::filesystem::directory_iterator(path))
@@ -94,7 +107,7 @@ void Scene::LoadAllModel()
 	}
 }
 
-void Scene::CreateCamera()
+void Assignment1_Stage::CreateCamera()
 {
 	Object* obj = new Object("Main Camera");
 	Camera* camera = new Camera(obj);
@@ -104,7 +117,7 @@ void Scene::CreateCamera()
 	camera->Position = obj->transform->Position;
 }
 
-void Scene::CreateDeferredObject()
+void Assignment1_Stage::CreateDeferredObject()
 {
 	ModelMesh* modelMesh;
 	if (MODELLOAD->Get("bunny_high_poly") != nullptr)
@@ -138,7 +151,7 @@ void Scene::CreateDeferredObject()
 	OBJMANAGER->Add(floor);
 }
 
-void Scene::CreateOrbit()
+void Assignment1_Stage::CreateOrbit()
 {
 	Mesh* orbitLineMesh = CreateOrbitLine(1, 50);
 	orbitLineMesh->UseDeferredRendering = true;
@@ -153,7 +166,7 @@ void Scene::CreateOrbit()
 	OBJMANAGER->Add(obj);
 }
 
-void Scene::CreateLight()
+void Assignment1_Stage::CreateLight()
 {
 	int count = 16;
 	std::string baseName = "Light";
@@ -198,7 +211,7 @@ void Scene::CreateLight()
 	selectedLightIndex = 0;
 }
 
-void Scene::RotateLights(float dt)
+void Assignment1_Stage::RotateLights(float dt)
 {
 	auto targetPosition = lights[0]->transform->Position;
 	if (glm::distance(lightOriginPosition, targetPosition) <= 0.1 && needResetRotationTimer)
@@ -219,7 +232,7 @@ void Scene::RotateLights(float dt)
 	UpdateLights();
 }
 
-void Scene::UpdateCamera(float dt)
+void Assignment1_Stage::UpdateCamera(float dt)
 {
 	auto cameraObject = GRAPHIC->MainCamera()->gameObject;
 	glm::vec3 right = glm::vec3(1, 0, 0);
@@ -254,7 +267,7 @@ void Scene::UpdateCamera(float dt)
 		cameraObject->transform->Rotation = currentRotation + (-right * (speed * 2));
 }
 
-void Scene::UpdateLights()
+void Assignment1_Stage::UpdateLights()
 {
 	constexpr float pi = glm::pi<float>();
 	float step = 2.0f * pi / activeLightCount;
@@ -281,7 +294,7 @@ void Scene::UpdateLights()
 	}
 }
 
-void Scene::UpdateGUI()
+void Assignment1_Stage::UpdateGUI()
 {
 	UpdateModelGUI();
 	UpdateLightGUI();
@@ -289,7 +302,7 @@ void Scene::UpdateGUI()
 	UpdateDebugViewGUI();
 }
 
-void Scene::UpdateModelGUI()
+void Assignment1_Stage::UpdateModelGUI()
 {
 	ImGui::Begin("Object Panel");
 	ImGui::Text("Models");
@@ -341,7 +354,7 @@ void Scene::UpdateModelGUI()
 	ImGui::End();
 }
 
-void Scene::UpdateLightGUI()
+void Assignment1_Stage::UpdateLightGUI()
 {
 	auto selectedLight = lights[selectedLightIndex];
 	ImGui::Begin("Lighting Panel");
@@ -451,7 +464,7 @@ void Scene::UpdateLightGUI()
 	ImGui::End();
 }
 
-void Scene::UpdateDeferredRenderGUI()
+void Assignment1_Stage::UpdateDeferredRenderGUI()
 {
 	ImGui::Begin("Deferred Render Panel");
 	ImGui::Checkbox("Active Draw FSQ", &GRAPHIC->ActiveDrawFSQ);
@@ -459,14 +472,14 @@ void Scene::UpdateDeferredRenderGUI()
 	ImGui::End();
 }
 
-void Scene::UpdateDebugViewGUI()
+void Assignment1_Stage::UpdateDebugViewGUI()
 {
 	ImGui::Begin("Debug View Panel");
 	GRAPHIC->DrawDeferredView();
 	ImGui::End();
 }
 
-void Scene::SetScenario1()
+void Assignment1_Stage::SetScenario1()
 {
 	activeLightCount = 5;
 	UpdateLights();
@@ -486,7 +499,7 @@ void Scene::SetScenario1()
 	}
 }
 
-void Scene::SetScenario2()
+void Assignment1_Stage::SetScenario2()
 {
 	activeLightCount = 7;
 	UpdateLights();
@@ -512,7 +525,7 @@ void Scene::SetScenario2()
 	}
 }
 
-void Scene::SetScenario3()
+void Assignment1_Stage::SetScenario3()
 {
 	activeLightCount = 11;
 	UpdateLights();

@@ -174,11 +174,11 @@
   <ItemGroup>
     <ClInclude Include="OrbitLineCreator.h" />
     <ClInclude Include="QuadCreator.h" />
-    <ClInclude Include="Scene.h" />
+    <ClInclude Include="Assignment1_Stage.h" />
     <ClInclude Include="SphereCreator.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="Assignment1_Stage.cpp" />
     <ClCompile Include="StartInit.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
