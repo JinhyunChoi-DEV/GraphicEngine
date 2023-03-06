@@ -17,8 +17,10 @@ End Header --------------------------------------------------------*/
 #include "ModelLoader.h"
 #include "ObjectManager.h"
 #include "Assignment1_Stage.h"
+#include "Assignment2_Stage.h"
 #include "ShaderManager.h"
 #include "TextureLoader.h"
+#include <fstream>
 
 #include <glm/glm.hpp>
 
@@ -31,13 +33,12 @@ int main(void)
 	ModelLoader* modelLoader = new ModelLoader();
 	ObjectManage* objManager = new ObjectManage();
 	ShaderManager* shaderM = new ShaderManager();
-	Assignment1_Stage* scene = new Assignment1_Stage();
+	Assignment2_Stage* scene = new Assignment2_Stage();
 	TextureLoader* textureLoader = new TextureLoader();
 
 	shaderM->Compile("Default", "Solid.vert", "Solid.frag");
 	shaderM->Compile("Line", "Line.vert", "Line.frag");
 	shaderM->Compile("Phong", "Phong Shading.vert", "Phong Shading.frag");
-
 
 	// Init
 	app->Initialize();

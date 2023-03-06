@@ -27,10 +27,8 @@ public:
 	ModelLoader();
 	~ModelLoader();
 
-	void Load(std::string name, std::string fileName);
+	void Load(std::string name, std::string path, bool skipNormalize = false);
 	ModelMesh* Get(std::string name);
-
-	const std::string rootPath = "models/";
 private:
 	bool Completed(const aiScene* scene);
 	void CreateNode(aiNode* node, const aiScene* scene);

@@ -17,6 +17,7 @@ End Header --------------------------------------------------------*/
 #include "Graphic.h"
 #include "Shader.h"
 #include "Application.h"
+#include "BoundingVolume.h"
 #include "ObjectManager.h"
 #include "Camera.h"
 #include "FSQMesh.h"
@@ -49,6 +50,7 @@ void Graphic::Initialize()
 	InitializeDeferredRender();
 
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
 }
 
 void Graphic::Update()
@@ -174,6 +176,11 @@ void Graphic::DrawDeferredView()
 	}
 }
 
+void Graphic::SetCurrentBVH(BoundingVolumeHierarchy* bvh)
+{
+	currentBVH = bvh;
+}
+
 Camera* Graphic::MainCamera()
 {
 	return mainCamera;
@@ -190,6 +197,7 @@ void Graphic::RenderDeferred(std::vector<Object*> objects)
 		auto mesh = obj->mesh;
 		mesh->Draw(obj->transform);
 	}
+
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
@@ -224,13 +232,23 @@ void Graphic::RenderForward(std::vector<Object*> lines, std::vector<Object*> obj
 	{
 		auto mesh = obj->mesh;
 		mesh->DrawDebug(obj->transform);
+
+		auto bv = obj->GetComponent<BoundingVolume>();
+		if (bv != nullptr)
+			bv->Draw();
 	}
 
 	for (auto const& obj : objects)
 	{
 		auto mesh = obj->mesh;
 		mesh->Draw(obj->transform);
+
+		auto bv = obj->GetComponent<BoundingVolume>();
+		if (bv != nullptr)
+			bv->Draw();
 	}
+
+	currentBVH->Draw();
 }
 
 void Graphic::InitializeDeferredRender()

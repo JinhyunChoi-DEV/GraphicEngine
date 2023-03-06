@@ -31,7 +31,7 @@ ModelLoader::~ModelLoader()
 	models.clear();
 }
 
-void ModelLoader::Load(std::string name, std::string fileName)
+void ModelLoader::Load(std::string name, std::string path, bool skipNormalize)
 {
 	float minValue = std::numeric_limits<float>::max();
 	float maxValue = std::numeric_limits<float>::min();
@@ -44,15 +44,16 @@ void ModelLoader::Load(std::string name, std::string fileName)
 	textureCoordinate.clear();
 	indices.clear();
 
-	std::string path = rootPath + fileName;
 	const aiScene* scene = import.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenSmoothNormals);
 	if (!Completed(scene))
 		return;
 
 	CreateNode(scene->mRootNode, scene);
 
-	vertex = SetToUnitVertex(data, vertex);
-	ModelMesh* mesh = new ModelMesh(vertex, vertexNormal, textureCoordinate, indices);
+	if (!skipNormalize)
+		vertex = SetToUnitVertex(data, vertex);
+
+	ModelMesh* mesh = new ModelMesh(vertex, vertexNormal, textureCoordinate, indices, skipNormalize);
 	mesh->Name = name;
 	models.insert(std::make_pair(name, mesh));
 }

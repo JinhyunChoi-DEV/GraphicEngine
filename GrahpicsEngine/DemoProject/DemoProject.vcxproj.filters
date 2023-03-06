@@ -1,13 +1,31 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClInclude Include="Assignment1_Stage.h" />
     <ClInclude Include="SphereCreator.h" />
     <ClInclude Include="OrbitLineCreator.h" />
     <ClInclude Include="QuadCreator.h" />
+    <ClInclude Include="Assignment1_Stage.h">
+      <Filter>Assignment1</Filter>
+    </ClInclude>
+    <ClInclude Include="Assignment2_Stage.h">
+      <Filter>Assignment2</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="StartInit.cpp" />
-    <ClCompile Include="Assignment1_Stage.cpp" />
+    <ClCompile Include="Assignment1_Stage.cpp">
+      <Filter>Assignment1</Filter>
+    </ClCompile>
+    <ClCompile Include="Assignment2_Stage.cpp">
+      <Filter>Assignment2</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Assignment1">
+      <UniqueIdentifier>{68ff51e6-8097-4482-92ec-d877a733e9a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assignment2">
+      <UniqueIdentifier>{6256c5b4-9290-4020-8806-6b6cee26c683}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

@@ -172,6 +172,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Assignment2_Stage.h" />
     <ClInclude Include="OrbitLineCreator.h" />
     <ClInclude Include="QuadCreator.h" />
     <ClInclude Include="Assignment1_Stage.h" />
@@ -179,6 +180,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Assignment1_Stage.cpp" />
+    <ClCompile Include="Assignment2_Stage.cpp" />
     <ClCompile Include="StartInit.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

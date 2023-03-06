@@ -32,7 +32,7 @@ void main()
 {
 	modelPosition = position;
 	worldPosition = vec3(model * vec4(position, 1.0f));
-	outputNormal = vec3(model * vec4(normal, 0.0f));
+	outputNormal =  normal;
 	outputUV = vec3(uvCoordinate.st, 1.0);
 
 	gl_Position = transform.projection * transform.view * model * vec4(position, 1.0f);

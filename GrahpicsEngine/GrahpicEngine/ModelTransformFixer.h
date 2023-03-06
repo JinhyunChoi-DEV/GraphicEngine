@@ -13,7 +13,7 @@ End Header --------------------------------------------------------*/
 
 #pragma once
 #include <vector>
-#include <glm/vec3.hpp>
+#include <glm/glm.hpp>
 
 struct FixerData
 {

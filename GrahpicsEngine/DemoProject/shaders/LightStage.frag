@@ -69,7 +69,7 @@ vec3 getColorWithLight(in vec3 position, in vec3 ambient, in vec3 diffuse, in ve
 void main()
 {
 	vec3 fragPosition = texture(positionBuffer, outputUV).rgb;
-	vec3 fragNormal = normalize(texture(normalBuffer, outputUV).rgb);
+	vec3 fragNormal = texture(normalBuffer, outputUV).rgb;
 	vec3 fragUV = texture(uvBuffer, outputUV).rgb;
 	vec3 fragAmbient = texture(ambientBuffer, outputUV).rgb;
 	vec3 fragDiffuse = texture(diffuseBuffer, outputUV).rgb;
@@ -83,11 +83,11 @@ void main()
 	for(int i =0; i<lights.lightCount; ++i)
 	{
 		vec3 ambient = getAmbient(lights.light[i]) * fragAmbient;
-		vec3 diffuse = getDiffuse(fragPosition, fragNormal, lights.light[i]) * fragDiffuse;
-		vec3 specular = getSpecular(fragPosition, fragNormal, lights.light[i]) * fragSpecular;
+		vec3 diffuse = getDiffuse(fragPosition, fragNormal, lights.light[i]);// * fragDiffuse;
+		vec3 specular = getSpecular(fragPosition, fragNormal, lights.light[i]);// * fragSpecular;
 		vec3 colorWithLight = getColorWithLight(fragPosition, ambient, diffuse, specular, lights.light[i]);
-
 		lightsResult += max(colorWithLight, 0);
+		//lightsResult+=lights.light[i].diffuse;
 	}
 
 	vec3 I_Local = lights.globalAmbientColor * constStrenght + lightsResult;
@@ -96,7 +96,8 @@ void main()
 	if(!affectedLighting)
 		outputColor = vec4(fragAmbient, 1.0);
 	else
-		outputColor = vec4(colorResult, 1.0);
+		outputColor = vec4(lightsResult, 1.0);
+		//outputColor = vec4(colorResult, 1.0);
 }
 
 vec3 getLightDirection(in vec3 position, in Light light)

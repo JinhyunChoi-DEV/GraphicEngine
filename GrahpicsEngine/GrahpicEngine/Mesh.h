@@ -34,6 +34,7 @@ public:
 	Shader* shader = nullptr;
 	Material* material;
 	std::string Name;
+	const std::vector<glm::vec3> Vertex() { return vertex; }
 
 protected:
 	std::vector<glm::vec3> vertex;

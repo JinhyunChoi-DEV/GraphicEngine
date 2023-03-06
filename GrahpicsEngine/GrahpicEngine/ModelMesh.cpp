@@ -23,7 +23,7 @@ End Header --------------------------------------------------------*/
 #include "Transform.h"
 
 ModelMesh::ModelMesh(std::vector<glm::vec3> vertex_, std::vector<glm::vec3> normal_,
-	std::vector<glm::vec2> uv_, std::vector<unsigned int> indices_)
+	std::vector<glm::vec2> uv_, std::vector<unsigned int> indices_, bool skipRescale)
 {
 	vertex = vertex_;
 	vertexNormal = normal_;
@@ -32,6 +32,10 @@ ModelMesh::ModelMesh(std::vector<glm::vec3> vertex_, std::vector<glm::vec3> norm
 	shader = SHADERS->Get("Default");
 	DrawFaceNormal = false;
 	DrawVertexNormal = false;
+	if (!skipRescale)
+		normalLineScale = 0.15f;
+	else
+		normalLineScale = sqrtf(glm::length(vertex[0])) * 2.0f;
 
 	if (textureCoordinate.size() <= 0)
 		CreateSphericalUV();
@@ -53,6 +57,7 @@ ModelMesh::ModelMesh(const ModelMesh& copy)
 	faceNormalLine = copy.faceNormalLine;
 	DrawVertexNormal = copy.DrawVertexNormal;
 	DrawFaceNormal = copy.DrawFaceNormal;
+	normalLineScale = copy.normalLineScale;
 
 	shader = copy.shader;
 
@@ -79,6 +84,7 @@ void ModelMesh::CopyData(const Mesh& copy)
 	faceNormalLine = mesh.faceNormalLine;
 	DrawVertexNormal = mesh.DrawVertexNormal;
 	DrawFaceNormal = mesh.DrawFaceNormal;
+	normalLineScale = mesh.normalLineScale;
 
 	CreateModelBuffers();
 	CreateLineBuffers();
@@ -217,7 +223,7 @@ void ModelMesh::CreateNormalLines()
 	for (auto i : indices)
 	{
 		auto v1 = vertex[i];
-		auto v2 = v1 + (vertexNormal[i] * 0.15f);
+		auto v2 = v1 + (vertexNormal[i] * normalLineScale);
 		vertexNormalLine.insert(vertexNormalLine.end(), { v1,v2 });
 	}
 
@@ -232,7 +238,7 @@ void ModelMesh::CreateNormalLines()
 
 		for (int j = 0; j < 3; ++j)
 		{
-			auto v2 = v1 + faceNormal[i + j] * 0.15f;
+			auto v2 = v1 + faceNormal[i + j] * normalLineScale;
 			faceNormalLine.insert(faceNormalLine.end(), { v1,v2 });
 		}
 	}

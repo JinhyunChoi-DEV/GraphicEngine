@@ -95,11 +95,10 @@ void Assignment1_Stage::InitializeGUI()
 
 void Assignment1_Stage::LoadAllModel()
 {
-	std::string path = MODELLOAD->rootPath;
-	for (const auto& entry : std::filesystem::directory_iterator(path))
+	for (const auto& entry : std::filesystem::directory_iterator("models/"))
 	{
 		auto filePath = entry.path().filename();
-		auto fileFull = filePath.string();
+		auto fileFull = "models/" + filePath.string();
 		auto lastIndex = fileFull.find_last_of(".");
 		auto file = fileFull.substr(0, lastIndex);
 		modelNames.push_back(file);
@@ -130,7 +129,7 @@ void Assignment1_Stage::CreateDeferredObject()
 	auto mesh = new ModelMesh(*modelMesh);
 	mesh->UseDeferredRendering = true;
 	mesh->material->UseGpuUV = true;
-	mesh->material->AmbientColor = glm::vec3(0);
+	mesh->material->AmbientColor = glm::vec3(1);
 	mesh->material->DiffuseColor = glm::vec3(1);
 	mesh->material->SpecularColor = glm::vec3(1);
 	mesh->material->DiffuseTexture = TEXTURES->Get("Diff");

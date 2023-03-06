@@ -21,9 +21,9 @@ Light::Light(Object* root_)
 	root = root_;
 
 	Direction = glm::vec3(0);
-	Ambient = glm::vec3(1);
-	Diffuse = glm::vec3(1);
-	Specular = glm::vec3(1);
+	Ambient = glm::vec3(0);
+	Diffuse = glm::vec3(0);
+	Specular = glm::vec3(0);
 	Type = LightType::Directional;
 	InnerAngle = 0.0f;
 	OuterAngle = 0.0f;

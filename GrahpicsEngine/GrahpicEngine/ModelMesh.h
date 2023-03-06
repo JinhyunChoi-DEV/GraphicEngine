@@ -22,7 +22,7 @@ class ModelMesh : public Mesh
 {
 public:
 	ModelMesh(std::vector<glm::vec3> vertex_, std::vector<glm::vec3> normal_,
-		std::vector<glm::vec2> uv_, std::vector<unsigned int> indices_);
+		std::vector<glm::vec2> uv_, std::vector<unsigned int> indices_, bool skipRescale);
 	ModelMesh(const ModelMesh& copy);
 	~ModelMesh();
 
@@ -32,6 +32,7 @@ public:
 
 	bool DrawVertexNormal;
 	bool DrawFaceNormal;
+	float normalLineScale;
 private:
 	void DrawModel(Transform*);
 	void DrawNormalLine(Transform*);

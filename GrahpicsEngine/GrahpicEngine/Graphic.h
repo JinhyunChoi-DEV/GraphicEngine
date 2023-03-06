@@ -15,6 +15,8 @@ End Header --------------------------------------------------------*/
 #include <vector>
 #include <glm/glm.hpp>
 
+#include "BoundingVolumeHierarchy.h"
+
 class Camera;
 class Light;
 class Mesh;
@@ -44,6 +46,7 @@ public:
 	void AddCamera(Camera*);
 	void DeleteCamera(Camera*);
 	void DrawDeferredView();
+	void SetCurrentBVH(BoundingVolumeHierarchy* bvh);
 	Camera* MainCamera();
 
 	LightGlobalData LightData;
@@ -61,6 +64,7 @@ private:
 	void UpdateTransformUniformBuffer(Camera* cam) const;
 	void UpdateLightingUniformBuffer();
 
+	BoundingVolumeHierarchy* currentBVH = nullptr;
 	Camera* mainCamera = nullptr;
 	Mesh* fsqMesh = nullptr;
 	std::vector<Camera*> cameras;

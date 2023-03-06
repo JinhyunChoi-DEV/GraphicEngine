@@ -182,10 +182,14 @@
     <ClCompile Include="..\libs\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\libs\imgui\imgui_widgets.cpp" />
     <ClCompile Include="Application.cpp" />
+    <ClCompile Include="AABB_BV.cpp" />
+    <ClCompile Include="BoundingVolume.cpp" />
+    <ClCompile Include="BoundingVolumeHierarchy.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="FSQMesh.cpp" />
     <ClCompile Include="Graphic.cpp" />
     <ClCompile Include="Input.cpp" />
+    <ClCompile Include="LarssonSphere_BV.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="LineMesh.cpp" />
     <ClCompile Include="Material.cpp" />
@@ -193,11 +197,14 @@
     <ClCompile Include="ModelLoader.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="ObjectManager.cpp" />
+    <ClCompile Include="PCASphere_BV.cpp" />
+    <ClCompile Include="RitterSphere_BV.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ShaderManager.cpp" />
     <ClCompile Include="StaticMesh.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TextureLoader.cpp" />
+    <ClCompile Include="TopDown_BVH.cpp" />
     <ClCompile Include="Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -211,11 +218,18 @@
     <ClInclude Include="..\libs\imgui\imstb_textedit.h" />
     <ClInclude Include="..\libs\imgui\imstb_truetype.h" />
     <ClInclude Include="Application.h" />
+    <ClInclude Include="AABB_BV.h" />
+    <ClInclude Include="BottomUp_BVH.h" />
+    <ClInclude Include="BoundingVolume.h" />
+    <ClInclude Include="BoundingVolumeHelper.h" />
+    <ClInclude Include="BoundingVolumeHierarchy.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="FSQMesh.h" />
     <ClInclude Include="Graphic.h" />
+    <ClInclude Include="IBoundingVolume.h" />
     <ClInclude Include="IComponent.h" />
     <ClInclude Include="Input.h" />
+    <ClInclude Include="LarssonSphere_BV.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="LineMesh.h" />
     <ClInclude Include="Material.h" />
@@ -225,11 +239,14 @@
     <ClInclude Include="ModelLoader.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="ObjectManager.h" />
+    <ClInclude Include="PCASphere_BV.h" />
+    <ClInclude Include="RitterSphere_BV.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShaderManager.h" />
     <ClInclude Include="StaticMesh.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TextureLoader.h" />
+    <ClInclude Include="TopDown_BVH.h" />
     <ClInclude Include="Transform.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -37,6 +37,12 @@
     <Filter Include="GUI">
       <UniqueIdentifier>{c1220603-32b3-4efe-92c8-12c6b6070703}</UniqueIdentifier>
     </Filter>
+    <Filter Include="BoundingVolume">
+      <UniqueIdentifier>{eeb4c8cd-dd31-41d9-b83e-a491e8888caf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BoundingVolumeHierarchy">
+      <UniqueIdentifier>{f8b4670d-ec1a-42e7-af03-5ede4e5c67aa}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModelLoader.cpp">
@@ -116,6 +122,27 @@
     </ClCompile>
     <ClCompile Include="..\libs\imgui\imgui_widgets.cpp">
       <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="AABB_BV.cpp">
+      <Filter>BoundingVolume</Filter>
+    </ClCompile>
+    <ClCompile Include="BoundingVolume.cpp">
+      <Filter>BoundingVolume</Filter>
+    </ClCompile>
+    <ClCompile Include="RitterSphere_BV.cpp">
+      <Filter>BoundingVolume</Filter>
+    </ClCompile>
+    <ClCompile Include="LarssonSphere_BV.cpp">
+      <Filter>BoundingVolume</Filter>
+    </ClCompile>
+    <ClCompile Include="PCASphere_BV.cpp">
+      <Filter>BoundingVolume</Filter>
+    </ClCompile>
+    <ClCompile Include="BoundingVolumeHierarchy.cpp">
+      <Filter>BoundingVolumeHierarchy</Filter>
+    </ClCompile>
+    <ClCompile Include="TopDown_BVH.cpp">
+      <Filter>BoundingVolumeHierarchy</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -208,6 +235,36 @@
     </ClInclude>
     <ClInclude Include="..\libs\imgui\imstb_truetype.h">
       <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="AABB_BV.h">
+      <Filter>BoundingVolume</Filter>
+    </ClInclude>
+    <ClInclude Include="BoundingVolume.h">
+      <Filter>BoundingVolume</Filter>
+    </ClInclude>
+    <ClInclude Include="RitterSphere_BV.h">
+      <Filter>BoundingVolume</Filter>
+    </ClInclude>
+    <ClInclude Include="LarssonSphere_BV.h">
+      <Filter>BoundingVolume</Filter>
+    </ClInclude>
+    <ClInclude Include="BoundingVolumeHelper.h">
+      <Filter>BoundingVolume</Filter>
+    </ClInclude>
+    <ClInclude Include="PCASphere_BV.h">
+      <Filter>BoundingVolume</Filter>
+    </ClInclude>
+    <ClInclude Include="BoundingVolumeHierarchy.h">
+      <Filter>BoundingVolumeHierarchy</Filter>
+    </ClInclude>
+    <ClInclude Include="TopDown_BVH.h">
+      <Filter>BoundingVolumeHierarchy</Filter>
+    </ClInclude>
+    <ClInclude Include="BottomUp_BVH.h">
+      <Filter>BoundingVolumeHierarchy</Filter>
+    </ClInclude>
+    <ClInclude Include="IBoundingVolume.h">
+      <Filter>BoundingVolume</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
