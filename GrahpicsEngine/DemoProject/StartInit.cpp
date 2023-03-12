@@ -16,7 +16,6 @@ End Header --------------------------------------------------------*/
 #include "Input.h"
 #include "ModelLoader.h"
 #include "ObjectManager.h"
-#include "Assignment1_Stage.h"
 #include "Assignment2_Stage.h"
 #include "ShaderManager.h"
 #include "TextureLoader.h"
