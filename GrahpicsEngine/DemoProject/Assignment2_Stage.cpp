@@ -26,6 +26,9 @@ Assignment2_Stage::Assignment2_Stage()
 	activeRitterSphere = false;
 	activeLarssonSphere = false;
 	activePCAShpere = false;
+
+	splitPointMethodList = { "Median of BV centers", "Median of BV extents", "K-even splits in one axis" };
+	currentSplitPointMethod = "Median of BV centers";
 }
 
 void Assignment2_Stage::Initialize()
@@ -72,6 +75,7 @@ void Assignment2_Stage::UpdateGUI()
 
 	UpdateDebugViewGUI();
 	UpdateBV_Active();
+	UpdateBVH_Active();
 
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -79,7 +83,7 @@ void Assignment2_Stage::UpdateGUI()
 
 void Assignment2_Stage::UpdateBV_Active()
 {
-	ImGui::Begin("Bounding Volume Active Panel");
+	ImGui::Begin("Object's Bounding Volume Active Panel");
 
 	ImGui::Checkbox("Active AABB", &activeAABB);
 	ImGui::Checkbox("Active Ritter Sphere", &activeRitterSphere);
@@ -97,6 +101,47 @@ void Assignment2_Stage::UpdateBV_Active()
 	ImGui::End();
 }
 
+void Assignment2_Stage::UpdateBVH_Active()
+{
+	ImGui::Begin("Bounding Volume Hierarchy Active Panel");
+	if (ImGui::CollapsingHeader("Top Down Method"))
+	{
+		if (ImGui::BeginCombo("Select Split Point Method", currentSplitPointMethod.c_str()))
+		{
+			for (int i = 0; i < (int)splitPointMethodList.size(); ++i)
+			{
+				bool isSelected = currentSplitPointMethod == splitPointMethodList[i];
+				if (ImGui::Selectable(splitPointMethodList[i].c_str(), isSelected))
+				{
+					bvh->SetTopdownSplitMethod((TopDownSplitType)i);
+					currentSplitPointMethod = splitPointMethodList[i];
+				}
+
+				if (isSelected)
+					ImGui::SetItemDefaultFocus();
+			}
+
+			ImGui::EndCombo();
+		}
+
+		ImGui::NewLine();
+		ImGui::Checkbox("Active AABB Box", &bvh->ActiveTopdown_AABB);
+		ImGui::Checkbox("Active Ritter's Bounding Sphere", &bvh->ActiveTopdown_RitterBS);
+		ImGui::Checkbox("Active Larsson's Bounding Sphere", &bvh->ActiveTopdown_LarrsonBS);
+		ImGui::Checkbox("Active PCA Bounding Sphere", &bvh->ActiveTopdown_PCABS);
+	}
+
+	if (ImGui::CollapsingHeader("Bottom Up Method"))
+	{
+		ImGui::Checkbox("Active AABB Box##", &bvh->ActiveBottomUp_AABB);
+		ImGui::Checkbox("Active Ritter's Bounding Sphere##", &bvh->ActiveBottomUp_RitterBS);
+		ImGui::Checkbox("Active Larsson's Bounding Sphere##", &bvh->ActiveBottomUp_LarrsonBS);
+		ImGui::Checkbox("Active PCA Bounding Sphere##", &bvh->ActiveBottomUp_PCABS);
+	}
+
+	ImGui::End();
+}
+
 void Assignment2_Stage::UpdateDebugViewGUI()
 {
 	ImGui::Begin("Debug View Panel");
@@ -108,22 +153,6 @@ void Assignment2_Stage::UpdateDebugViewGUI()
 
 void Assignment2_Stage::LoadPlantSection()
 {
-	/* --------------- TEST START---------------*/
-	/*MODELLOAD->Load("Test", "models/bunny_high_poly.obj", false);
-	auto meshT = MODELLOAD->Get("Test");
-	Object* object = new Object("Test");
-	auto newMesh = new ModelMesh(*meshT);
-	newMesh->material->AmbientColor = glm::vec3(1);
-	newMesh->material->DiffuseColor = glm::vec3(1);
-	newMesh->material->SpecularColor = glm::vec3(1);
-	newMesh->UseDeferredRendering = true;
-	object->mesh = newMesh;
-	BoundingVolume* bv = new BoundingVolume(object);
-	object->AddComponent(bv);
-	bvLists.push_back(bv);
-	OBJMANAGER->Add(object);*/
-	/* --------------- TEST END ---------------*/
-
 	std::fstream file("PowerPlants/" + sectionFileName);
 
 	std::string str;
@@ -138,9 +167,8 @@ void Assignment2_Stage::LoadPlantSection()
 
 		Object* object = new Object(objName);
 		auto newMesh = new ModelMesh(*mesh);
-		newMesh->material->AmbientColor = glm::vec3(1);
-		//newMesh->material->DiffuseColor = glm::vec3(0.8f);
-		//newMesh->material->SpecularColor = glm::vec3(0.8f);
+		newMesh->material->DiffuseColor = glm::vec3(0.8f);
+		newMesh->material->SpecularColor = glm::vec3(0.8f);
 		newMesh->UseDeferredRendering = true;
 		object->mesh = newMesh;
 
@@ -163,9 +191,8 @@ void Assignment2_Stage::SetBaseLight()
 	Object* lightObject = new Object("Light_Base");
 
 	Light* baseLight = new Light(lightObject);
-	baseLight->Ambient = glm::vec3(1);
-	//baseLight->Diffuse = glm::vec3(1);
-	//baseLight->Specular = glm::vec3(1);
+	baseLight->Diffuse = glm::vec3(0.9f);
+	baseLight->Specular = glm::vec3(0.9f);
 	baseLight->Type = LightType::Directional;
 	baseLight->Direction = glm::vec3(0, 0, -1);
 	lightObject->AddComponent(baseLight);
@@ -232,4 +259,5 @@ void Assignment2_Stage::CreateBVH()
 
 	bvh = new BoundingVolumeHierarchy(bvTempList);
 	GRAPHIC->SetCurrentBVH(bvh);
+	bvh->SetTopdownSplitMethod((TopDownSplitType)0);
 }

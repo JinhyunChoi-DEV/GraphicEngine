@@ -107,6 +107,12 @@ void RitterSphere_BV::Expand(std::vector<BoundingVolume> others)
 	CreateBuffer();
 }
 
+float RitterSphere_BV::Volume()
+{
+	float cube_radius = powf(extreme.radius, 3);
+	return (4.0f / 3.0f) * glm::pi<float>() * cube_radius;
+}
+
 void RitterSphere_BV::Draw()
 {
 	if (VAO == 0 || VBO == 0)
@@ -124,7 +130,7 @@ void RitterSphere_BV::Draw()
 	shader_->Set("color", lineColor);
 
 	glBindVertexArray(VAO);
-	glDrawElements(GL_LINES, lineIndices.size(), GL_UNSIGNED_INT, nullptr);
+	glDrawElements(GL_LINES, (GLsizei)lineIndices.size(), GL_UNSIGNED_INT, nullptr);
 	glBindVertexArray(0);
 }
 
@@ -145,9 +151,8 @@ void RitterSphere_BV::CreateSphere()
 	lineIndices = std::get<1>(data);
 
 	center = extreme.center;
-	//tricky ways
-	min = glm::vec3(extreme.center.x, extreme.center.y, extreme.center.z - extreme.radius);
-	max = glm::vec3(extreme.center.x, extreme.center.y, extreme.center.z + extreme.radius);
+	min = extreme.center - extreme.radius;
+	max = extreme.center + extreme.radius;
 }
 
 void RitterSphere_BV::CreateBuffer()

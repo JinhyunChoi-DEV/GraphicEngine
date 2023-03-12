@@ -18,8 +18,8 @@ enum class BoundingVolumeType
 struct TreeNode
 {
 	NodeType type;
-	BoundingVolume* parent;
+	BoundingVolume* currentBV;
 	std::vector<BoundingVolume> bvObjects;
 	TreeNode* left, * right;
-	int height = 0;
+	int level = 0;
 };

@@ -23,6 +23,7 @@ private:
 	void InitializeGUI();
 	void UpdateGUI();
 	void UpdateBV_Active();
+	void UpdateBVH_Active();
 	void UpdateDebugViewGUI();
 
 	bool activeAABB;
@@ -32,6 +33,8 @@ private:
 
 	float lastUpdateTime = 0.0f;
 	std::string sectionFileName = "Section4.txt";
+	std::vector<std::string> splitPointMethodList;
+	std::string currentSplitPointMethod;
 
 	BoundingVolumeHierarchy* bvh = nullptr;
 	std::vector<BoundingVolume*> bvLists;

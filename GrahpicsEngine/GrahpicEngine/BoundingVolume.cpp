@@ -1,6 +1,7 @@
 #include "BoundingVolume.h"
 #include "Object.h"
 
+std::vector<glm::vec3> BoundingVolume::BottomUpColors;
 BoundingVolume::BoundingVolume()
 {
 	ActiveAABB = true;
@@ -41,6 +42,14 @@ void BoundingVolume::Expand(std::vector<BoundingVolume> others)
 	pcaSphere.Expand(others);
 }
 
+void BoundingVolume::ActiveByType(BoundingVolumeType type)
+{
+	ActiveAABB = type == BoundingVolumeType::AABB;
+	ActiveRitterSphere = type == BoundingVolumeType::Ritter_BS;
+	ActiveLarssonSphere = type == BoundingVolumeType::Larsson_BS;
+	ActivePCAShpere = type == BoundingVolumeType::PCA_BS;
+}
+
 IBoundingVolume* BoundingVolume::GetBV(BoundingVolumeType type)
 {
 	if (type == BoundingVolumeType::AABB)
@@ -77,15 +86,15 @@ void BoundingVolume::Delete()
 
 void BoundingVolume::Draw()
 {
-	//if (ActiveAABB)
-		//aabb.Draw();
+	if (ActiveAABB)
+		aabb.Draw();
 
-	//if (ActiveRitterSphere)
-		//ritterShpere.Draw();
+	if (ActiveRitterSphere)
+		ritterShpere.Draw();
 
-	//if (ActiveLarssonSphere)
-	//larssonSphere.Draw();
+	if (ActiveLarssonSphere)
+		larssonSphere.Draw();
 
-	//if (ActivePCAShpere)
-	pcaSphere.Draw();
+	if (ActivePCAShpere)
+		pcaSphere.Draw();
 }

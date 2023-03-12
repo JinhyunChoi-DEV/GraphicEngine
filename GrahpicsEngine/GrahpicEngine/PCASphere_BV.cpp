@@ -24,19 +24,10 @@ void PCASphere_BV::CreateByMesh(Mesh* mesh)
 	{
 		FindMaximumElement(A);
 
-		float theta = 0.f;
-		if (glm::abs(A[p][p] - A[q][q]) < 0.0001f)
-		{
-			theta = glm::pi<double>() / 4.;
-		}
-		else
-		{
-			float tangent2theta = 2.f * A[p][q] / (A[p][p] - A[q][q]);
-			theta = atanf(tangent2theta) / 2.0f;
-		}
-
-		float c = cosf(theta);
-		float s = sinf(theta);
+		float beta = (A[q][q] - A[p][p]) / (2 * A[p][q]);
+		float t = sin(beta) / (abs(beta) + sqrtf(beta * beta + 1));
+		float c = 1.f / sqrtf(t * t + 1);
+		float s = c * t;
 
 		glm::mat3 J = GetJacobiMatrix(c, s);
 		glm::mat3 inverse_J = glm::transpose(J);
@@ -117,6 +108,12 @@ void PCASphere_BV::Expand(std::vector<BoundingVolume> others)
 	CreateBuffer();
 }
 
+float PCASphere_BV::Volume()
+{
+	float cube_radius = powf(extreme.radius, 3);
+	return (4.0f / 3.0f) * glm::pi<float>() * cube_radius;
+}
+
 void PCASphere_BV::Draw()
 {
 	if (VAO == 0 || VBO == 0)
@@ -134,7 +131,7 @@ void PCASphere_BV::Draw()
 	shader_->Set("color", lineColor);
 
 	glBindVertexArray(VAO);
-	glDrawElements(GL_LINES, lineIndices.size(), GL_UNSIGNED_INT, nullptr);
+	glDrawElements(GL_LINES, (GLsizei)lineIndices.size(), GL_UNSIGNED_INT, nullptr);
 	glBindVertexArray(0);
 }
 
@@ -185,9 +182,8 @@ void PCASphere_BV::CreateSphere()
 	lineIndices = std::get<1>(data);
 
 	center = extreme.center;
-	//tricky ways
-	min = glm::vec3(extreme.center.x, extreme.center.y, extreme.center.z - extreme.radius);
-	max = glm::vec3(extreme.center.x, extreme.center.y, extreme.center.z + extreme.radius);
+	min = extreme.center - extreme.radius;
+	max = extreme.center + extreme.radius;
 }
 
 void PCASphere_BV::CreateCovarianceMat(Mesh* mesh)
@@ -258,7 +254,10 @@ void PCASphere_BV::FindMaximumElement(glm::mat3 mat)
 	{
 		for (int j = 0; j < 3; ++j)
 		{
-			if (abs(mat[i][j]) > maxElement)
+			if (i == j)
+				continue;
+
+			if (mat[i][j] > maxElement)
 			{
 				maxElement = abs(mat[i][j]);
 				p = i;

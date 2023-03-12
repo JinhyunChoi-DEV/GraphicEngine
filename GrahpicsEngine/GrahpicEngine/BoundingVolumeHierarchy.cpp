@@ -2,21 +2,36 @@
 #include "BoundingVolume.h"
 #include "TopDown_BVH.h"
 
-int BoundingVolumeHierarchy::MAX_HEIGHT = 7;
 BoundingVolumeHierarchy::BoundingVolumeHierarchy(std::vector<BoundingVolume> bvLists)
 {
-	hierarchyLevelColor[0] = glm::vec3(0.75, 0.38, 1);
-	hierarchyLevelColor[1] = glm::vec3(0.62, 0.815, 1);
-	hierarchyLevelColor[2] = glm::vec3(0.49, 1, 0.73);
-	hierarchyLevelColor[3] = glm::vec3(1, 0.98, 0.68);
-	hierarchyLevelColor[4] = glm::vec3(1, 0.54, 0.27);
-	hierarchyLevelColor[5] = glm::vec3(1, 0.41, 0.45);
-	hierarchyLevelColor[6] = glm::vec3(0.72, 1, 0.85);
-
 	topDown_AABB.Create(bvLists, BoundingVolumeType::AABB);
 	topDown_RitterBS.Create(bvLists, BoundingVolumeType::Ritter_BS);
 	topDown_LarrsonBS.Create(bvLists, BoundingVolumeType::Larsson_BS);
 	topDown_PCABS.Create(bvLists, BoundingVolumeType::PCA_BS);
+
+	bottomUp_AABB.Create(bvLists, BoundingVolumeType::AABB);
+	bottomUp_RitterBS.Create(bvLists, BoundingVolumeType::Ritter_BS);
+	bottomUp_LarrsonBS.Create(bvLists, BoundingVolumeType::Larsson_BS);
+	bottomUp_PCABS.Create(bvLists, BoundingVolumeType::PCA_BS);
+}
+
+void BoundingVolumeHierarchy::SetTopdownSplitMethod(TopDownSplitType type)
+{
+	topDown_AABB.ActiveMedianCenter = type == TopDownSplitType::Median_Center;
+	topDown_AABB.ActiveMedianExtents = type == TopDownSplitType::Median_Extents;
+	topDown_AABB.ActiveMedianKEvenSplit = type == TopDownSplitType::K_Even_Splits;
+
+	topDown_RitterBS.ActiveMedianCenter = type == TopDownSplitType::Median_Center;
+	topDown_RitterBS.ActiveMedianExtents = type == TopDownSplitType::Median_Extents;
+	topDown_RitterBS.ActiveMedianKEvenSplit = type == TopDownSplitType::K_Even_Splits;
+
+	topDown_LarrsonBS.ActiveMedianCenter = type == TopDownSplitType::Median_Center;
+	topDown_LarrsonBS.ActiveMedianExtents = type == TopDownSplitType::Median_Extents;
+	topDown_LarrsonBS.ActiveMedianKEvenSplit = type == TopDownSplitType::K_Even_Splits;
+
+	topDown_PCABS.ActiveMedianCenter = type == TopDownSplitType::Median_Center;
+	topDown_PCABS.ActiveMedianExtents = type == TopDownSplitType::Median_Extents;
+	topDown_PCABS.ActiveMedianKEvenSplit = type == TopDownSplitType::K_Even_Splits;
 }
 
 void BoundingVolumeHierarchy::Draw()
@@ -32,4 +47,16 @@ void BoundingVolumeHierarchy::Draw()
 
 	if (ActiveTopdown_PCABS)
 		topDown_PCABS.Draw();
+
+	if (ActiveBottomUp_AABB)
+		bottomUp_AABB.Draw();
+
+	if (ActiveBottomUp_RitterBS)
+		bottomUp_RitterBS.Draw();
+
+	if (ActiveBottomUp_LarrsonBS)
+		bottomUp_LarrsonBS.Draw();
+
+	if (ActiveBottomUp_PCABS)
+		bottomUp_PCABS.Draw();
 }

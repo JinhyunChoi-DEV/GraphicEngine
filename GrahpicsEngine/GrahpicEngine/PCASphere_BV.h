@@ -14,6 +14,7 @@ public:
 	void Expand(glm::vec3 min_, glm::vec3 max_) override;
 	void Expand(BoundingVolume other) override;
 	void Expand(std::vector<BoundingVolume> others) override;
+	float Volume() override;
 	void Draw() override;
 	void Clear() override;
 

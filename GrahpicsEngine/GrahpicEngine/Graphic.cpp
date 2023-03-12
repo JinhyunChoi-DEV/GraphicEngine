@@ -243,9 +243,9 @@ void Graphic::RenderForward(std::vector<Object*> lines, std::vector<Object*> obj
 		auto mesh = obj->mesh;
 		mesh->Draw(obj->transform);
 
-		//auto bv = obj->GetComponent<BoundingVolume>();
-		//if (bv != nullptr)
-		//	bv->Draw();
+		auto bv = obj->GetComponent<BoundingVolume>();
+		if (bv != nullptr)
+			bv->Draw();
 	}
 
 	currentBVH->Draw();

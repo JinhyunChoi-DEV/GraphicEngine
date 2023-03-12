@@ -72,6 +72,15 @@ void AABB_BV::Expand(std::vector<BoundingVolume> others)
 	CreateBuffer();
 }
 
+float AABB_BV::Volume()
+{
+	float dx = max.x - min.x;
+	float dy = max.y - min.y;
+	float dz = max.z - min.z;
+
+	return dx * dy * dz;
+}
+
 void AABB_BV::Draw()
 {
 	if (VAO == 0 || VBO == 0)

@@ -183,6 +183,7 @@
     <ClCompile Include="..\libs\imgui\imgui_widgets.cpp" />
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="AABB_BV.cpp" />
+    <ClCompile Include="BottomUp_BVH.cpp" />
     <ClCompile Include="BoundingVolume.cpp" />
     <ClCompile Include="BoundingVolumeHierarchy.cpp" />
     <ClCompile Include="Camera.cpp" />
@@ -241,6 +242,7 @@
     <ClInclude Include="Object.h" />
     <ClInclude Include="ObjectManager.h" />
     <ClInclude Include="PCASphere_BV.h" />
+    <ClInclude Include="Random.h" />
     <ClInclude Include="RitterSphere_BV.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShaderManager.h" />

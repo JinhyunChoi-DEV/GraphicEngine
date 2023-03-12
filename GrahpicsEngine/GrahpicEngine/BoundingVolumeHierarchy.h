@@ -10,10 +10,8 @@ class BoundingVolumeHierarchy
 public:
 	BoundingVolumeHierarchy(std::vector<BoundingVolume> bvLists);
 
+	void SetTopdownSplitMethod(TopDownSplitType type);
 	void Draw();
-
-	static int MAX_HEIGHT;
-	inline static glm::vec3 hierarchyLevelColor[7]{ glm::vec3(0) };
 
 	bool ActiveTopdown_AABB;
 	bool ActiveTopdown_RitterBS;

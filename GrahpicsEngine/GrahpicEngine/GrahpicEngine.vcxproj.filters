@@ -144,6 +144,9 @@
     <ClCompile Include="TopDown_BVH.cpp">
       <Filter>BoundingVolumeHierarchy</Filter>
     </ClCompile>
+    <ClCompile Include="BottomUp_BVH.cpp">
+      <Filter>BoundingVolumeHierarchy</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ModelLoader.h">
@@ -268,6 +271,9 @@
     </ClInclude>
     <ClInclude Include="BoundingVolumeHierarchyHelper.h">
       <Filter>BoundingVolumeHierarchy</Filter>
+    </ClInclude>
+    <ClInclude Include="Random.h">
+      <Filter>Application</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

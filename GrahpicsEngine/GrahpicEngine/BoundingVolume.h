@@ -16,6 +16,7 @@ public:
 	void Expand(glm::vec3 min, glm::vec3 max);
 	void Expand(BoundingVolume other);
 	void Expand(std::vector<BoundingVolume> others);
+	void ActiveByType(BoundingVolumeType type);
 
 	IBoundingVolume* GetBV(BoundingVolumeType type);
 
@@ -36,5 +37,7 @@ public:
 	RitterSphere_BV ritterShpere{};
 	LarssonSphere_BV larssonSphere{};
 	PCASphere_BV pcaSphere{};
+
+	static std::vector<glm::vec3> BottomUpColors;
 private:
 };
