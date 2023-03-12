@@ -1,5 +1,6 @@
 #pragma once
 #include "AABB_BV.h"
+#include "BoundingVolumeHierarchyHelper.h"
 #include "RitterSphere_BV.h"
 #include "LarssonSphere_BV.h"
 #include "IComponent.h"
@@ -12,8 +13,13 @@ public:
 	BoundingVolume();
 
 	void CreateByMesh(Object* base_);
+	void Expand(glm::vec3 min, glm::vec3 max);
 	void Expand(BoundingVolume other);
 	void Expand(std::vector<BoundingVolume> others);
+
+	IBoundingVolume* GetBV(BoundingVolumeType type);
+
+	void SetColor(glm::vec3 color);
 
 	void Initialize() override {}
 	void Update() override {}
@@ -26,9 +32,9 @@ public:
 	bool ActiveLarssonSphere;
 	bool ActivePCAShpere;
 
-private:
 	AABB_BV aabb{};
 	RitterSphere_BV ritterShpere{};
 	LarssonSphere_BV larssonSphere{};
 	PCASphere_BV pcaSphere{};
+private:
 };

@@ -26,19 +26,50 @@ void AABB_BV::CreateByMesh(Mesh* mesh)
 		max.y = std::max(max.y, v.y);
 		max.z = std::max(max.z, v.z);
 	}
+	center = (min + max) / 2.0f;
 
+	CreateAABBLines();
+	CreateBuffer();
+}
+
+void AABB_BV::Expand(glm::vec3 min_, glm::vec3 max_)
+{
+	min = glm::min(min, min_);
+	max = glm::max(max, max_);
+	center = (min + max) / 2.0f;
+
+	AABBLines.clear();
+	ClearBuffer();
 	CreateAABBLines();
 	CreateBuffer();
 }
 
 void AABB_BV::Expand(BoundingVolume other)
 {
-	//TODO
+	min = glm::min(min, other.aabb.min);
+	max = glm::max(max, other.aabb.max);
+	center = (min + max) / 2.0f;
+
+	AABBLines.clear();
+	ClearBuffer();
+	CreateAABBLines();
+	CreateBuffer();
+
 }
 
 void AABB_BV::Expand(std::vector<BoundingVolume> others)
 {
-	//TODO:
+	for (auto bv : others)
+	{
+		min = glm::min(min, bv.aabb.min);
+		max = glm::max(max, bv.aabb.max);
+	}
+	center = (min + max) / 2.0f;
+
+	AABBLines.clear();
+	ClearBuffer();
+	CreateAABBLines();
+	CreateBuffer();
 }
 
 void AABB_BV::Draw()
@@ -66,6 +97,7 @@ void AABB_BV::Clear()
 	AABBLines.clear();
 	min = glm::vec3(FLT_MAX);
 	max = glm::vec3(-FLT_MAX);
+	center = glm::vec3(0);
 }
 
 void AABB_BV::CreateBuffer()
@@ -84,6 +116,9 @@ void AABB_BV::CreateBuffer()
 
 void AABB_BV::ClearBuffer()
 {
+	if (VAO == 0 || VBO == 0)
+		return;
+
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
 

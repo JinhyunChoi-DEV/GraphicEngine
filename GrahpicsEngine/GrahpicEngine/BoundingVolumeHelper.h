@@ -8,7 +8,7 @@
 struct ExtremeData
 {
 	glm::vec3 center = glm::vec3(0);
-	float radius = 0;
+	float radius = std::numeric_limits<float>::infinity();
 };
 
 inline std::tuple<glm::vec3, glm::vec3> ExtremePoint(Mesh* mesh, glm::vec3 dir)

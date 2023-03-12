@@ -1,5 +1,5 @@
 #include <glad/glad.h>
-#include <glm/gtc/matrix_access.hpp>
+#include <glm/ext/matrix_transform.hpp>
 
 #include "PCASphere_BV.h"
 #include "BoundingVolume.h"
@@ -23,10 +23,20 @@ void PCASphere_BV::CreateByMesh(Mesh* mesh)
 	while (!CheckConvergence(A, prevSum))
 	{
 		FindMaximumElement(A);
-		float beta = (A[q][q] - A[p][p]) / (2.0f * A[p][q]);
-		float t = glm::sign(beta) / (abs(beta) + sqrtf(powf(beta, 2) + 1));
-		float c = 1.0f / (sqrtf(powf(t, 2) + 1));
-		float s = c * t;
+
+		float theta = 0.f;
+		if (glm::abs(A[p][p] - A[q][q]) < 0.0001f)
+		{
+			theta = glm::pi<double>() / 4.;
+		}
+		else
+		{
+			float tangent2theta = 2.f * A[p][q] / (A[p][p] - A[q][q]);
+			theta = atanf(tangent2theta) / 2.0f;
+		}
+
+		float c = cosf(theta);
+		float s = sinf(theta);
 
 		glm::mat3 J = GetJacobiMatrix(c, s);
 		glm::mat3 inverse_J = glm::transpose(J);
@@ -50,14 +60,61 @@ void PCASphere_BV::CreateByMesh(Mesh* mesh)
 	CreateBuffer();
 }
 
+// Sphere can not expand by Minimum and Maximum points
+void PCASphere_BV::Expand(glm::vec3 min_, glm::vec3 max_)
+{}
+
 void PCASphere_BV::Expand(BoundingVolume other)
 {
-	//TODO
+	if (std::isinf(extreme.radius))
+	{
+		extreme = other.pcaSphere.extreme;
+	}
+	else
+	{
+		auto otherExt = other.pcaSphere.extreme;
+		glm::vec3 newCenter = (extreme.center + otherExt.center) / 2.0f;
+		float centerDistance = glm::distance(extreme.center, otherExt.center);
+		float diameter = centerDistance + extreme.radius + otherExt.radius;
+		float newRadius = diameter / 2.0f;
+
+		extreme.center = newCenter;
+		extreme.radius = newRadius;
+	}
+
+	vertices.clear();
+	lineIndices.clear();
+
+	ClearBuffer();
+	CreateSphere();
+	CreateBuffer();
 }
 
 void PCASphere_BV::Expand(std::vector<BoundingVolume> others)
 {
-	//TODO
+	glm::vec3 center(0);
+	for (auto bv : others)
+	{
+		center += bv.pcaSphere.center;
+	}
+	center /= others.size();
+
+	float r = 0;
+	for (int i = 0; i < (int)others.size(); ++i)
+	{
+		auto otherExt = others[i].pcaSphere.extreme;
+		float centerDistance = glm::distance(otherExt.center, center);
+		r = glm::max(r, centerDistance + otherExt.radius);
+	}
+	extreme.center = center;
+	extreme.radius = r;
+
+	vertices.clear();
+	lineIndices.clear();
+
+	ClearBuffer();
+	CreateSphere();
+	CreateBuffer();
 }
 
 void PCASphere_BV::Draw()
@@ -127,8 +184,10 @@ void PCASphere_BV::CreateSphere()
 	vertices = std::get<0>(data);
 	lineIndices = std::get<1>(data);
 
-	min = extreme.center - glm::vec3(extreme.radius);
-	max = extreme.center + glm::vec3(extreme.radius);
+	center = extreme.center;
+	//tricky ways
+	min = glm::vec3(extreme.center.x, extreme.center.y, extreme.center.z - extreme.radius);
+	max = glm::vec3(extreme.center.x, extreme.center.y, extreme.center.z + extreme.radius);
 }
 
 void PCASphere_BV::CreateCovarianceMat(Mesh* mesh)
@@ -183,8 +242,9 @@ bool PCASphere_BV::CheckConvergence(glm::mat3 mat, float& prevSum)
 	}
 	else
 	{
+		float tempPrevSum = prevSum;
 		prevSum = sum;
-		return fabs(sum - 0.0f) < 0.0001f || fabs(prevSum - sum) < 0.0001f;
+		return fabs(sum - 0.0f) < 0.0001f || fabs(tempPrevSum - sum) < 0.0001f;
 	}
 }
 
@@ -210,37 +270,27 @@ void PCASphere_BV::FindMaximumElement(glm::mat3 mat)
 
 glm::mat3 PCASphere_BV::GetJacobiMatrix(float c, float s)
 {
-	glm::mat3 result;
-	result[0][0] = c;
-	result[0][1] = s;
-	result[0][2] = 0;
-
-	result[1][0] = -s;
-	result[1][1] = c;
-	result[1][2] = 0;
-
-	result[2][0] = 0;
-	result[2][1] = 0;
-	result[2][2] = 1;
+	glm::mat3 result = glm::identity<glm::mat3>();
+	result[p][p] = c;
+	result[p][q] = -s;
+	result[q][p] = s;
+	result[q][q] = c;
 
 	return result;
 }
 
 glm::vec3 PCASphere_BV::GetEigenVector(glm::mat3 V)
 {
-	int column = 0;
+	int maxIndex = 0;
 	float maxElement = -FLT_MAX;
 	for (int i = 0; i < 3; ++i)
 	{
-		for (int j = 0; j < 3; ++j)
+		if (abs(V[i][i]) > maxElement)
 		{
-			if (abs(V[i][j]) > maxElement)
-			{
-				maxElement = abs(V[i][j]);
-				column = j;
-			}
+			maxElement = abs(V[i][i]);
+			maxIndex = i;
 		}
 	}
 
-	return glm::column(V, column);
+	return V[maxIndex];
 }

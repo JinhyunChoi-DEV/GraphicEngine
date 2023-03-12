@@ -266,5 +266,8 @@
     <ClInclude Include="IBoundingVolume.h">
       <Filter>BoundingVolume</Filter>
     </ClInclude>
+    <ClInclude Include="BoundingVolumeHierarchyHelper.h">
+      <Filter>BoundingVolumeHierarchy</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

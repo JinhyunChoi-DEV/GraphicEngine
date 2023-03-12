@@ -16,7 +16,6 @@ void LarssonSphere_BV::CreateByMesh(Mesh* mesh)
 {
 	auto vertexSize = (int)mesh->Vertex().size();
 
-	std::vector<glm::vec3> extremePoints;
 	//Create Extreme Points
 	auto result = ExtremePoint(mesh, glm::vec3(1, 0, 0));
 	extremePoints.insert(extremePoints.end(), { std::get<0>(result), std::get<1>(result) });
@@ -45,7 +44,7 @@ void LarssonSphere_BV::CreateByMesh(Mesh* mesh)
 			auto currentP = extremePoints[j];
 			float distance = glm::distance(baseP, currentP);
 			float radius = distance / 2.0f;
-			if (extreme.radius < radius)
+			if (extreme.radius < radius || std::isinf(extreme.radius))
 			{
 				extreme.center = (baseP + currentP) / 2.0f;
 				extreme.radius = radius;
@@ -58,19 +57,66 @@ void LarssonSphere_BV::CreateByMesh(Mesh* mesh)
 		GrowSphere(extreme, mesh);
 
 	//Create ExtremeData
-	CreateExtremeData();
+	CreateSphere();
 
 	CreateBuffer();
 }
 
+// Sphere can not expand by Minimum and Maximum points
+void LarssonSphere_BV::Expand(glm::vec3 min_, glm::vec3 max_)
+{}
+
 void LarssonSphere_BV::Expand(BoundingVolume other)
 {
-	// TODO:
+	if (std::isinf(extreme.radius))
+	{
+		extreme = other.larssonSphere.extreme;
+	}
+	else
+	{
+		auto otherExt = other.larssonSphere.extreme;
+		glm::vec3 newCenter = (extreme.center + otherExt.center) / 2.0f;
+		float centerDistance = glm::distance(extreme.center, otherExt.center);
+		float diameter = centerDistance + extreme.radius + otherExt.radius;
+		float newRadius = diameter / 2.0f;
+
+		extreme.center = newCenter;
+		extreme.radius = newRadius;
+	}
+
+	vertices.clear();
+	lineIndices.clear();
+
+	ClearBuffer();
+	CreateSphere();
+	CreateBuffer();
 }
 
 void LarssonSphere_BV::Expand(std::vector<BoundingVolume> others)
 {
-	//TODO
+	glm::vec3 center(0);
+	for (auto bv : others)
+	{
+		center += bv.larssonSphere.extreme.center;
+	}
+	center /= others.size();
+
+	float r = 0;
+	for (int i = 0; i < (int)others.size(); ++i)
+	{
+		auto otherExt = others[i].larssonSphere.extreme;
+		float centerDistance = glm::distance(otherExt.center, center);
+		r = glm::max(r, centerDistance + otherExt.radius);
+	}
+	extreme.center = center;
+	extreme.radius = r;
+
+	vertices.clear();
+	lineIndices.clear();
+
+	ClearBuffer();
+	CreateSphere();
+	CreateBuffer();
 }
 
 void LarssonSphere_BV::Draw()
@@ -104,14 +150,16 @@ void LarssonSphere_BV::Clear()
 	max = glm::vec3(-FLT_MAX);
 }
 
-void LarssonSphere_BV::CreateExtremeData()
+void LarssonSphere_BV::CreateSphere()
 {
 	auto data = CreateBoundingSphere(extreme, 37, 37);
 	vertices = std::get<0>(data);
 	lineIndices = std::get<1>(data);
 
-	min = extreme.center - glm::vec3(extreme.radius);
-	max = extreme.center + glm::vec3(extreme.radius);
+	center = extreme.center;
+	//tricky ways
+	min = glm::vec3(extreme.center.x, extreme.center.y, extreme.center.z - extreme.radius);
+	max = glm::vec3(extreme.center.x, extreme.center.y, extreme.center.z + extreme.radius);
 }
 
 void LarssonSphere_BV::CreateBuffer()

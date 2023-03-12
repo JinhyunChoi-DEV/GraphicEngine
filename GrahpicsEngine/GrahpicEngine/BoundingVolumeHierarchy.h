@@ -1,23 +1,10 @@
 #pragma once
 #include <vector>
 
-#include "BottomUp_BVH.h"
 #include "TopDown_BVH.h"
-
-enum NodeType
-{
-	INTERNAL, LEAF
-};
+#include "BottomUp_BVH.h"
 
 class BoundingVolume;
-struct Node
-{
-	NodeType type;
-	BoundingVolume* data;
-	int numObjects;
-	Node* left, * right;
-};
-
 class BoundingVolumeHierarchy
 {
 public:
@@ -25,7 +12,27 @@ public:
 
 	void Draw();
 
+	static int MAX_HEIGHT;
+	inline static glm::vec3 hierarchyLevelColor[7]{ glm::vec3(0) };
+
+	bool ActiveTopdown_AABB;
+	bool ActiveTopdown_RitterBS;
+	bool ActiveTopdown_LarrsonBS;
+	bool ActiveTopdown_PCABS;
+
+	bool ActiveBottomUp_AABB;
+	bool ActiveBottomUp_RitterBS;
+	bool ActiveBottomUp_LarrsonBS;
+	bool ActiveBottomUp_PCABS;
+
 private:
-	TopDown_BVH topDown{};
-	//BottomUp_BVH bottomUp;
+	TopDown_BVH topDown_AABB;
+	TopDown_BVH topDown_RitterBS;
+	TopDown_BVH topDown_LarrsonBS;
+	TopDown_BVH topDown_PCABS;
+
+	BottomUp_BVH bottomUp_AABB;
+	BottomUp_BVH bottomUp_RitterBS;
+	BottomUp_BVH bottomUp_LarrsonBS;
+	BottomUp_BVH bottomUp_PCABS;
 };
